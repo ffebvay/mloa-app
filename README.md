@@ -1,4 +1,4 @@
-# mloa-app
+# MLOA App
 
 ## Project setup
 ```

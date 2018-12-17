@@ -16,7 +16,7 @@ function login(username, password) {
         body: JSON.stringify({ username, password })
     }
 
-    return fetch(`http://localhost:8080/users/authenticate`, requestOptions)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users/authenticate`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // login successful if there's a jwt token in the response
@@ -41,7 +41,7 @@ function register(user) {
         body: JSON.stringify(user)
     }
 
-    return fetch(`http://localhost:8080/users/register`, requestOptions).then(handleResponse)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users/register`, requestOptions).then(handleResponse)
 }
 
 function getAll() {
@@ -50,7 +50,7 @@ function getAll() {
         headers: authHeader()
     }
 
-    return fetch(`http://localhost:8080/users`, requestOptions).then(handleResponse)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users`, requestOptions).then(handleResponse)
 }
 
 
@@ -60,7 +60,7 @@ function getById(id) {
         headers: authHeader()
     }
 
-    return fetch(`http://localhost:8080/users/${id}`, requestOptions).then(handleResponse)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users/${id}`, requestOptions).then(handleResponse)
 }
 
 function update(user) {
@@ -70,7 +70,7 @@ function update(user) {
         body: JSON.stringify(user)
     }
 
-    return fetch(`http://localhost:8080/users/${user.id}`, requestOptions).then(handleResponse)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users/${user.id}`, requestOptions).then(handleResponse)
 }
 
 function handleResponse(response) {
