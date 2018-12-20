@@ -15,6 +15,8 @@ Vue.config.productionTip = false
 Vue.use(VeeValidate)
 Vue.use(VueMaterial)
 
+console.log(process.env.VUE_APP_ROOT_API)
+
 // setup fake backend
 //import { configureFakeBackend } from './_helpers'
 //configureFakeBackend()

@@ -18,7 +18,7 @@ const actions = {
                 },
                 error => {
                     commit('loginFailure', error)
-                    dispatch('alert/error', 'There was an error during the login process : ' + error, { root: true })
+                    dispatch('alert/error', 'Une erreur est survenue durant la tentative de connexion : ' + error, { root: true })
                 }
             );
     },
@@ -41,7 +41,7 @@ const actions = {
                 },
                 error => {
                     commit('registerFailure', error)
-                    dispatch('alert/error', 'There was an error during the registration : ' + error, { root: true })
+                    dispatch('alert/error', 'Une erreur est survenue lors de l\'inscription : ' + error, { root: true })
                 }
             )
     }

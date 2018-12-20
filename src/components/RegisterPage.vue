@@ -84,12 +84,12 @@
                 this.submitted = true;
                 this.$validator.validate().then(valid => {
                     if (valid) {
-                        this.register(this.user);
+                        this.register(this.user)
                     }
-                });
+                })
             }
         }
-    };
+    }
 </script>
 
 <style scoped>

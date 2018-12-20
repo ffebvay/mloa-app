@@ -1,6 +1,6 @@
 {
   "name": "MLOA App",
-  "short_name": "mloapp",
+  "short_name": "MLOApp",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
