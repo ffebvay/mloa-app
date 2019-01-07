@@ -3,6 +3,7 @@ import { authHeader } from '../_helpers'
 export const taskService = {
     add,
     getAll,
+    getAllByUser,
     getById,
     update,
     delete: _delete
@@ -27,6 +28,14 @@ function getAll() {
     return fetch(`${process.env.VUE_APP_ROOT_API}/tasks`, requestOptions).then(handleResponse)
 }
 
+function getAllByUser(uId) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    }
+
+    return fetch(`${process.env.VUE_APP_ROOT_API}/tasks/user/${uId}`, requestOptions).then(handleResponse)
+}
 
 function getById(id) {
     const requestOptions = {
@@ -44,7 +53,7 @@ function update(task) {
         body: JSON.stringify(task)
     }
 
-    return fetch(`${process.env.VUE_APP_ROOT_API}/tasks/update/${task.id}`, requestOptions).then(handleResponse)
+    return fetch(`${process.env.VUE_APP_ROOT_API}/tasks/update/${task._id}`, requestOptions).then(handleResponse)
 }
 
 function _delete(id) {

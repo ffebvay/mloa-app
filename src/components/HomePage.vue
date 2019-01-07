@@ -75,7 +75,7 @@
 
 <style scoped>
     .home {
-        height: 100vh;
+        height: 100%;
         overflow-x: hidden;
     }
 
@@ -87,6 +87,7 @@
         position: sticky;
         left: 0;
         bottom: 0;
+        z-index: 1;
     }
 
     .fixed-fab {
