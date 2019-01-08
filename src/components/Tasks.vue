@@ -1,130 +1,6 @@
 <template>
     <div class="tasks-list">
 
-        <!-- <md-tabs class="md-transparent" md-alignment="centered">
-
-            <md-tab id="tab-today" md-label="Aujourd'hui">
-
-                <div id="tasks-container" class="md-layout md-gutter">
-
-                    <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERROR: {{ tasks.error }}</span>
-
-                    <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
-
-                        <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task.id">
-
-                            <md-card md-with-hover v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-accent" :class="{'gray-card': task.completed}">
-                                <md-ripple>
-                                    <md-card-header>
-                                        <md-card-header-text>
-                                            <div class="md-title">{{ task.text }}</div>
-                                        </md-card-header-text>
-
-                                        <md-menu md-size="big" md-direction="bottom-end">
-                                            <md-button class="md-icon-button" md-menu-trigger>
-                                                <md-icon>more_vert</md-icon>
-                                            </md-button>
-
-                                            <md-menu-content>
-                                                <md-menu-item @click="updateTask(task._id)">
-                                                    <span>Modifier</span>
-                                                    <md-icon>create</md-icon>
-                                                </md-menu-item>
-                                                <md-menu-item @click="deleteTask(task._id)">
-                                                    <span>Supprimer</span>
-                                                    <md-icon>clear</md-icon>
-                                                </md-menu-item>
-                                            </md-menu-content>
-                                        </md-menu>
-                                    </md-card-header>
-
-                                    <md-card-content v-if="task.description">
-                                        <div class="md-subhead">
-                                            {{ task.description }}
-                                        </div>
-                                    </md-card-content>
-
-                                    <md-card-actions class="md-layout md-alignment-bottom-right">
-                                        <div class="check-container">
-                                            <md-checkbox v-model="task.completed" v-on:change="markDone(task)"></md-checkbox>
-                                        </div>
-                                    </md-card-actions>
-                                </md-ripple>
-                            </md-card>
-                        </div>
-
-                    </div>
-
-                    <div v-else class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                        <span class="md-subheading">Aucune tâche à effectuer aujourd'hui, bravo !</span>
-                    </div>
-
-                </div>
-
-            </md-tab>
-
-            <md-tab id="tab-done" md-label="Accomplies">
-
-                <div id="tasks-done-container" class="md-layout md-gutter">
-
-                    <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERROR: {{ tasks.error }}</span>
-
-                    <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
-
-                        <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task.id">
-
-                            <md-card md-with-hover v-if="task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-accent" :class="{'gray-card': task.completed}">
-                                <md-ripple>
-                                    <md-card-header>
-                                        <md-card-header-text>
-                                            <div class="md-title">{{ task.text }}</div>
-                                        </md-card-header-text>
-
-                                        <md-menu md-size="big" md-direction="bottom-end">
-                                            <md-button class="md-icon-button" md-menu-trigger>
-                                                <md-icon>more_vert</md-icon>
-                                            </md-button>
-
-                                            <md-menu-content>
-                                                <md-menu-item @click="updateTask(task._id)">
-                                                    <span>Modifier</span>
-                                                    <md-icon>create</md-icon>
-                                                </md-menu-item>
-                                                <md-menu-item @click="deleteTask(task._id)">
-                                                    <span>Supprimer</span>
-                                                    <md-icon>clear</md-icon>
-                                                </md-menu-item>
-                                            </md-menu-content>
-                                        </md-menu>
-                                    </md-card-header>
-
-                                    <md-card-content v-if="task.description">
-                                        <div class="md-subhead">
-                                            {{ task.description }}
-                                        </div>
-                                    </md-card-content>
-
-                                    <md-card-actions class="md-layout md-alignment-bottom-right">
-                                        <div class="check-container">
-                                            <md-checkbox v-model="task.completed" v-on:change="markDone(task)"></md-checkbox>
-                                        </div>
-                                    </md-card-actions>
-                                </md-ripple>
-                            </md-card>
-                        </div>
-
-                    </div>
-
-                    <div v-else class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                        <span class="md-subheading">Il vous reste de grandes choses à accomplir !</span>
-                    </div>
-
-                </div>
-
-            </md-tab>
-
-        </md-tabs> -->
-
         <div class="md-layout md-gutter">
 
             <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
@@ -150,6 +26,17 @@
                             <md-card-header>
                                 <md-card-header-text>
                                     <div class="md-title">{{ task.text }}</div>
+                                    <div class="md-subhead">
+                                        <div v-if="task.difficulty === 1">
+                                            Difficulté: FACILE
+                                        </div>
+                                        <div v-else-if="task.difficulty === 1.5">
+                                            Difficulté: MOYEN
+                                        </div>
+                                        <div v-else>
+                                            Difficulté: EXTRÊME
+                                        </div>
+                                    </div>
                                 </md-card-header-text>
 
                                 <md-menu md-size="big" md-direction="bottom-end">
@@ -171,7 +58,7 @@
                             </md-card-header>
 
                             <md-card-content v-if="task.description">
-                                <div class="md-subhead">
+                                <div>
                                     {{ task.description }}
                                 </div>
                             </md-card-content>
@@ -218,6 +105,17 @@
                             <md-card-header>
                                 <md-card-header-text>
                                     <div class="md-title">{{ task.text }}</div>
+                                    <div class="md-subhead">
+                                        <div v-if="task.difficulty === 1">
+                                            Difficulté: FACILE
+                                        </div>
+                                        <div v-else-if="task.difficulty === 1.5">
+                                            Difficulté: MOYEN
+                                        </div>
+                                        <div v-else>
+                                            Difficulté: EXTRÊME
+                                        </div>
+                                    </div>
                                 </md-card-header-text>
 
                                 <md-menu md-size="big" md-direction="bottom-end">
@@ -239,7 +137,7 @@
                             </md-card-header>
 
                             <md-card-content v-if="task.description">
-                                <div class="md-subhead">
+                                <div>
                                     {{ task.description }}
                                 </div>
                             </md-card-content>
@@ -268,7 +166,7 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
-    import EditTask from "./EditTask";
+    import EditTask from "./EditTask"
 
     export default {
         name: "Tasks",

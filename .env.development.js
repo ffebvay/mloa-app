@@ -1,1 +1,1 @@
-VUE_APP_ROOT_API=http://localhost:4000/api
+VUE_APP_ROOT_API=http://192.168.0.43:4000/api

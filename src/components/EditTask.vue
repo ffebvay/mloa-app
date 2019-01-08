@@ -95,6 +95,7 @@
 
                         this.task._id = this.taskId
                         this.task.userId = this.account.user._id
+                        this.task.updatedAt = Date.now()
 
                         console.log(this.task)
                         this.editTask(this.task)
