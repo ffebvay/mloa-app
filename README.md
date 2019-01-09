@@ -10,6 +10,9 @@ npm install
 npm run serve
 ```
 
+While in development, you will have to be sure that a few dependencies are installed (VueJS as front-end template engine) 
+and make the project run locally with the command given above : `npm run serve`.
+
 ### Compiles and minifies for production
 ```
 npm run build
