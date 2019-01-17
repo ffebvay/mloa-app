@@ -1,7 +1,8 @@
 <template>
     <md-dialog :md-active.sync="show"
                md-closed="show = false"
-               md-clicked-outside="show = false" >
+               md-clicked-outside="show = false"
+               @md-opened="fillForm">
 
         <md-dialog-content>
 
@@ -11,7 +12,7 @@
 
                 <md-field>
                     <label>Titre</label>
-                    <md-input v-model="task.text" v-validate="'required'" name="text"/>
+                    <md-input v-model="task.text" v-validate="'required'" name="text" />
                 </md-field>
 
                 <md-field>
@@ -51,17 +52,11 @@
         name: "EditTask",
         data () {
             return {
-                task: {
-                    _id: '',
-                    userId: '',
-                    text: '',
-                    description: '',
-                    difficulty: ''
-                },
+                task: {},
                 submitted: false
             }
         },
-        props: ['visible', 'taskId'],
+        props: ['visible', 'taskId', 'taskToUpdate'],
         computed: {
             ...mapState({
                 account: state => state.account,
@@ -87,18 +82,21 @@
                 getAllUsers: 'getAll',
             }),
             ...mapActions('tasks', ['editTask']),
+            fillForm() {
+                this.task = this.taskToUpdate
+                console.log(this.task)
+                console.log('Form filled !')
+            },
             handleSubmit(e) {
                 this.submitted = true
                 this.$validator.validate().then(valid => {
                     if (valid) {
-                        console.log('Current Task ID : ',  this.taskId)
+                        console.log('New Task : ',  this.task)
 
-                        this.task._id = this.taskId
-                        this.task.userId = this.account.user._id
+
                         this.task.updatedAt = Date.now()
 
-                        console.log(this.task)
-                        this.editTask(this.task)
+                        this.editTask(this.taskToUpdate)
                     }
                 })
                 this.$emit('close')

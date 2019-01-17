@@ -2,10 +2,20 @@
     <div class="create-task">
 
         <!-- Top toolbar -->
-        <md-toolbar class="md-accent" md-elevation="1">
-            <h2 class="md-title">Hola {{account.user.firstName}}.</h2>
+        <md-toolbar class="md-primary" md-elevation="0">
+            <div class="md-toolbar-section-start">
+                <router-link to="/">
+                    <md-button class="md-icon-button">
+                        <md-icon>home</md-icon>
+                    </md-button>
+                </router-link>
+            </div>
 
             <div class="md-toolbar-section-end">
+                <md-button class="md-icon-button">
+                    <md-icon>refresh</md-icon>
+                </md-button>
+
                 <router-link to="/login">
                     <md-button>Déconnexion</md-button>
                 </router-link>
@@ -16,7 +26,7 @@
         <div class="form-container">
             <form id="create-form" class="md-layout md-alignment-center-center" @submit.prevent="handleSubmit">
 
-                <md-card class="md-layout-item md-gutter md-size-30 md-small-size-100">
+                <md-card class="md-layout-item md-gutter md-size-50 md-small-size-100">
                     <md-card-header>
                         <div class="md-title">Ajouter une tâche</div>
                     </md-card-header>
@@ -55,7 +65,8 @@
 
                         <md-card-actions class="md-layout md-alignment-center-space-around">
 
-                            <router-link to="/" class="btn btn-link">Annuler</router-link>
+                            <md-button type="submit" class="md-primary">Confirmer</md-button>
+                            <md-button href="/" class="md-primary">Annuler</md-button>
 
                         </md-card-actions>
 
@@ -76,13 +87,12 @@
         </div>
 
         <!-- Navigation bar -->
-        <div class="phone-viewport fixed-element">
+        <div class="phone-viewport">
 
-            <md-bottom-bar id="bottom-bar" class="md-accent" md-type="shift">
-                <md-bottom-bar-item id="bottom-bar-item-home" md-label="Tâches" md-icon="home"></md-bottom-bar-item>
-                <md-bottom-bar-item id="bottom-bar-item-pages" md-label="Jeux" md-icon="games"></md-bottom-bar-item>
-                <md-bottom-bar-item id="bottom-bar-item-posts" md-label="MLOA" md-icon="whatshot"></md-bottom-bar-item>
-                <md-bottom-bar-item id="bottom-bar-item-about" md-label="À propos" md-icon="help"></md-bottom-bar-item>
+            <md-bottom-bar class="md-primary" md-type="fixed">
+                <md-bottom-bar-item md-label="Tâches" md-icon="home"></md-bottom-bar-item>
+                <md-bottom-bar-item md-label="MLOA" md-icon="whatshot"></md-bottom-bar-item>
+                <md-bottom-bar-item md-label="À propos" md-icon="help"></md-bottom-bar-item>
             </md-bottom-bar>
 
         </div>
@@ -142,23 +152,23 @@
         overflow-x: hidden;
     }
 
+    .form-container {
+        height: 100%;
+    }
+
     .phone-viewport {
         width: 100%;
         display: inline-flex;
         align-items: flex-end;
         overflow: hidden;
-        position: sticky;
+        position: fixed;
         left: 0;
         bottom: 0;
         z-index: 9999;
     }
 
-    .form-container {
-        height: 100%;
-    }
-
     .fixed-fab {
-        position: sticky;
+        position: fixed;
         right: 0;
         bottom: 56px;
         z-index: 9999;

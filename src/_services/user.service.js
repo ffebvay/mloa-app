@@ -19,6 +19,7 @@ function login(username, password) {
     return fetch(`${process.env.VUE_APP_ROOT_API}/users/authenticate`, requestOptions)
         .then(handleResponse)
         .then(user => {
+
             // login successful if there's a jwt token in the response
             if (user.token) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -70,7 +71,16 @@ function update(user) {
         body: JSON.stringify(user)
     }
 
-    return fetch(`${process.env.VUE_APP_ROOT_API}/users/${user.id}`, requestOptions).then(handleResponse)
+    console.log(requestOptions)
+    console.log('Is it you from Client User Service ? : ', user)
+
+    return fetch(`${process.env.VUE_APP_ROOT_API}/users/${user._id}`, requestOptions)
+        .then(handleResponse)
+        .then(user => {
+            console.log(user)
+
+            return user
+        })
 }
 
 function handleResponse(response) {

@@ -20,7 +20,7 @@ const actions = {
                     commit('loginFailure', error)
                     dispatch('alert/error', 'Une erreur est survenue durant la tentative de connexion : ' + error, { root: true })
                 }
-            );
+            )
     },
     logout({ commit }) {
         userService.logout()
@@ -42,6 +42,29 @@ const actions = {
                 error => {
                     commit('registerFailure', error)
                     dispatch('alert/error', 'Une erreur est survenue lors de l\'inscription : ' + error, { root: true })
+                }
+            )
+    },
+    getCurrent({ commit }, id) {
+        commit('getCurrentRequest', id)
+
+        userService.getById(id)
+            .then(
+                user => commit('getCurrentSuccess', user),
+                error => commit('getCurrentFailure', error)
+            )
+    },
+    updateUser({ dispatch, commit }, user) {
+        commit('updateUserRequest', user)
+
+        userService.update(user)
+            .then(
+                user => {
+                    commit('updateUserSuccess', user)
+                },
+                error => {
+                    commit('updateUserFailure', error)
+                    dispatch('alert/error', 'Une erreur est survenue lors de la modification de l\'utilisateur : ' + error, { root: true })
                 }
             )
     }
@@ -72,7 +95,31 @@ const mutations = {
     },
     registerFailure(state, error) {
         state.status = {}
-    }
+    },
+    updateUserRequest(state, user) {
+        state.status = { registering: true }
+        state.user = user
+    },
+    updateUserSuccess(state, user) {
+        state.status = { updating: true }
+        state.user = user
+    },
+    updateUserFailure(state, error) {
+        state.status = { error }
+        state.user = null
+    },
+    getCurrentRequest(state, user) {
+        state.status = { fetching: true }
+        state.user = user
+    },
+    getCurrentSuccess(state, user) {
+        state.status = {}
+        state.user = user
+    },
+    getCurrentFailure(state, error) {
+        state.status = { error }
+        state.user = null
+    },
 }
 
 export const account = {

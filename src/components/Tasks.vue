@@ -1,7 +1,7 @@
 <template>
     <div class="tasks-list">
 
-        <div class="md-layout md-gutter">
+        <div class="md-layout">
 
             <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
                 <span class="md-headline md-layout md-alignment-center-center">Aujourd'hui</span>
@@ -13,15 +13,15 @@
 
         </div>
 
-        <div id="tasks-container" class="md-layout md-gutter">
+        <div id="tasks-container" class="md-layout ">
 
-            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERROR: {{ tasks.error }}</span>
+            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
 
             <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
 
-                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task.id">
+                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
 
-                    <md-card md-with-hover v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-accent" :class="{'gray-card': task.completed}">
+                    <md-card v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary" :class="{'gray-card': task.completed}">
                         <md-ripple>
                             <md-card-header>
                                 <md-card-header-text>
@@ -45,7 +45,7 @@
                                     </md-button>
 
                                     <md-menu-content>
-                                        <md-menu-item @click="updateTask(task._id)">
+                                        <md-menu-item @click="updateTask(task)">
                                             <span>Modifier</span>
                                             <md-icon>create</md-icon>
                                         </md-menu-item>
@@ -65,7 +65,7 @@
 
                             <md-card-actions class="md-layout md-alignment-bottom-right">
                                 <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="markDone(task)"></md-checkbox>
+                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
                                 </div>
                             </md-card-actions>
                         </md-ripple>
@@ -80,7 +80,7 @@
 
         </div>
 
-        <div class="md-layout md-gutter">
+        <div class="md-layout ">
 
             <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
                 <span class="md-headline md-layout md-alignment-center-center">Déjà accomplies</span>
@@ -92,15 +92,15 @@
 
         </div>
 
-        <div id="tasks-done-container" class="md-layout md-gutter">
+        <div id="tasks-done-container" class="md-layout ">
 
-            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERROR: {{ tasks.error }}</span>
+            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
 
             <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
 
-                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task.id">
+                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
 
-                    <md-card md-with-hover v-if="task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-accent" :class="{'gray-card': task.completed}">
+                    <md-card v-if="task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary" :class="{'gray-card': task.completed}">
                         <md-ripple>
                             <md-card-header>
                                 <md-card-header-text>
@@ -124,7 +124,7 @@
                                     </md-button>
 
                                     <md-menu-content>
-                                        <md-menu-item @click="updateTask(task._id)">
+                                        <md-menu-item @click="updateTask(task)">
                                             <span>Modifier</span>
                                             <md-icon>create</md-icon>
                                         </md-menu-item>
@@ -144,7 +144,7 @@
 
                             <md-card-actions class="md-layout md-alignment-bottom-right">
                                 <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="markDone(task)"></md-checkbox>
+                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
                                 </div>
                             </md-card-actions>
                         </md-ripple>
@@ -159,7 +159,7 @@
 
         </div>
 
-        <EditTask :visible="showDialog" :task-id="currentTask" @close="onClose" />
+        <EditTask :visible="showDialog" :task-id="currentTaskId" :task-to-update="currentTask" @close="onClose" />
 
     </div>
 </template>
@@ -174,26 +174,44 @@
         data: function() {
             return {
                 showDialog: false,
-                currentTask: ''
+                currentTaskId: '',
+                currentTask: null,
+                currentUser: JSON.parse(localStorage.getItem('user')) // in order to refresh Vue instance when data is modified
             }
         },
         computed: {
             ...mapState({
                 account: state => state.account,
-                tasks: state => state.tasks.all
+                tasks: state => state.tasks.all,
+                users: state => state.users.all
             })
         },
         created () {
             this.getAllTasks(this.account.user._id)
         },
+        updated () {
+            // Only current way I found to update User stats once a task is completed
+            setTimeout(() => {
+                    this.getLoggedUser(this.account.user._id)
+                }, 1000)
+        },
         methods: {
             ...mapActions('tasks', {
                 getAllTasks: 'getAllByUser',
+                getSpecificTask: 'getTask',
                 markDone: 'completeTask',
                 deleteSelected: 'deleteTask'
             }),
-            updateTask: function(taskId) {
-                this.currentTask = taskId
+            ...mapActions('account', {
+                updateStats: 'updateUser',
+                getLoggedUser: 'getCurrent'
+            }),
+            ...mapActions('users', {
+                getAllUsers: 'getAll'
+            }),
+            updateTask: function(task) {
+                this.currentTask = task
+                this.currentTaskId = task._id
                 this.showDialog = true
             },
             deleteTask: function(taskId) {
@@ -208,7 +226,7 @@
 
                 // Only solution I found to force re-render upon Edit Dialog closing...
                 setTimeout(() =>
-                { this.getAllTasks(this.account.user._id) }, 500)
+                { this.getAllTasks(this.account.user._id) }, 1000)
             }
         }
     }
@@ -220,6 +238,7 @@
     }
 
     .tasks-list {
+        margin-bottom: 26px;
         padding-top: 25px;
         height: 100vh;
         width: 100%;
@@ -231,29 +250,29 @@
     }
 
     .light-bg {
-        padding: 20px;
-        background-color: lightgray;
+        background-color: rgba(1, 1, 1, 0);
     }
 
     .gray-card {
         background-color: darkgray !important;
+        color: #fff !important;
     }
 
     #tasks-container {
         margin: 24px;
         padding: 5px;
-        overflow-x: hidden;
+        /*overflow-x: hidden;*/
     }
 
     #tasks-done-container {
         margin: 24px;
         padding: 5px;
-        overflow-x: hidden;
+        /*overflow-x: hidden;*/
     }
 
     .task-container {
         display: block;
-        margin: 20px;
+        margin: 15px;
         text-align: left;
     }
 </style>

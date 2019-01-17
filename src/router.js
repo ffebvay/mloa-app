@@ -5,6 +5,9 @@ import HomePage from './components/HomePage'
 import LoginPage from './components/LoginPage'
 import RegisterPage from './components/RegisterPage'
 import CreateTask from './components/CreateTask'
+import UserProfile from './components/UserProfile'
+import SocialFeed from './components/SocialFeed'
+import About from './components/About'
 
 Vue.use(Router)
 
@@ -14,6 +17,22 @@ const router = new Router({
       { path: '/login', component: LoginPage },
       { path: '/register', component: RegisterPage },
       { path: '/task', component: CreateTask },
+      {
+          path: '/profile',
+          name: 'profile',
+          component: UserProfile,
+          props: { default: true }
+      },
+      {
+          path: '/feed',
+          name: 'feed',
+          component: SocialFeed
+      },
+      {
+          path: '/about',
+          name: 'about',
+          component: About
+      },
 
       // otherwise redirect to home
       { path: '*', redirect: '/' }

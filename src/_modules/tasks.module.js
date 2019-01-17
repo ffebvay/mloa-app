@@ -1,11 +1,19 @@
 import {taskService} from '../_services'
+import {userService} from '../_services'
+import { experienceToNextLevel } from "../_helpers/gameHelpers"
 import router from '../router'
+
+const currentUser = JSON.parse(localStorage.getItem('user'))
+
+// Log current user fetched
+console.log(currentUser)
 
 const state = {
     all: {},
-    status: {},
-    current: {}
+    status: {}
 }
+
+console.log(state)
 
 const actions = {
     getAll({ commit }) {
@@ -24,6 +32,15 @@ const actions = {
             .then(
                 tasks => commit('getAllByUserSuccess', tasks),
                 error => commit('getAllByUserFailure', { uId, error: error.toString() })
+            )
+    },
+    getTask({ commit }, tId) {
+        commit('getTaskRequest', tId)
+
+        taskService.getById(tId)
+            .then(
+                task => commit('getTaskSuccess', task),
+                error => commit('getTaskFailure', { tId, error: error.toString() })
             )
     },
     addTask({ dispatch, commit }, task) {
@@ -48,12 +65,50 @@ const actions = {
     completeTask({ commit }, task) {
         commit('completeTaskRequest', task)
 
+        // get local user logged in with its inner stats
+        let newStats = currentUser
         const tId = task._id
 
+        // Update selected Task "completed" status
         taskService.update(task)
             .then(
                 task => commit('completeTaskSuccess', task),
                 error => commit('completeTaskFailure', { tId, error: error.toString() })
+            )
+
+        commit('updateUserRequest', newStats)
+
+        // Add or remove XP if Task was checked/ unchecked
+        if (task.completed === true) {
+            newStats.totalExp += (task.grantExp * task.difficulty)
+            newStats.completedTasks++
+        }
+        else {
+            newStats.totalExp -= (task.grantExp * task.difficulty)
+            newStats.completedTasks--
+        }
+
+        // Level up if totalXP of user is superior to the amount of XP to level up
+        if (newStats.totalExp >= experienceToNextLevel(newStats.currentLevel)) {
+            newStats.currentLevel++
+        }
+
+        // Update User stats with local modifications to server
+        // then User should be updated in localStorage when updated to DB
+        userService.update(newStats)
+            .then(
+                user => {
+                    commit('updateUserSuccess', user)
+
+                    // Update local user too, so that it
+                    localStorage.setItem('user', JSON.stringify(newStats))
+
+                    router.push('/')
+                },
+                error => {
+                    commit('updateUserFailure', error)
+                    console.log('Une erreur est survenue durant la tentative de modification des caractéristiques : ' + error)
+                }
             )
     },
     editTask({ dispatch, commit }, task) {
@@ -95,6 +150,15 @@ const mutations = {
     },
     getAllFailure(state, error) {
         state.all = { error }
+    },
+    getTaskRequest(state) {
+        state.current = { fetching: true }
+    },
+    getTaskSuccess(state, task) {
+        state.current = task
+    },
+    getTaskFailure(state, error) {
+        state.current = { error }
     },
     getAllByUserRequest(state) {
         state.all = { loading: true }
@@ -139,6 +203,17 @@ const mutations = {
         state.status = {}
     },
     deleteFailure(state, error) {
+        state.status = { error }
+    },
+    updateUserRequest(state, user) {
+        state.status = { updating: true }
+        state.user = user
+    },
+    updateUserSuccess(state, user) {
+        state.status = { updated: true }
+        state.user = user
+    },
+    updateUserFailure(state, error) {
         state.status = { error }
     }
 }
