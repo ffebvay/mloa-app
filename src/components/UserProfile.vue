@@ -4,9 +4,9 @@
         <!-- Top toolbar -->
         <md-toolbar class="md-primary" md-elevation="0">
             <div class="md-toolbar-section-start">
-                <router-link to="/">
+                <router-link :to="{ name: 'profile' }">
                     <md-button class="md-icon-button">
-                        <md-icon>home</md-icon>
+                        <md-icon>person</md-icon>
                     </md-button>
                 </router-link>
             </div>
@@ -17,7 +17,9 @@
                 </md-button>
 
                 <router-link to="/login">
-                    <md-button>Déconnexion</md-button>
+                    <md-button class="md-icon-button">
+                        <md-icon>power_settings_new</md-icon>
+                    </md-button>
                 </router-link>
             </div>
 
@@ -49,7 +51,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="username">Nom d'utilisateur</label>
-                                        <md-input name="username" id="username" v-model="currentUser.username"></md-input>
+                                        <md-input name="username" id="username" v-model="currentUser.username" disabled></md-input>
                                     </md-field>
                                 </div>
 
@@ -59,8 +61,8 @@
 
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
-                                        <label for="gender">Sexe</label>
-                                        <md-select name="gender" id="gender" md-dense>
+                                        <label for="gender">Genre</label>
+                                        <md-select v-model="currentUser.genre" name="gender" id="gender" md-dense disabled>
                                             <md-option value="masculin">Masculin</md-option>
                                             <md-option value="feminin">Féminin</md-option>
                                         </md-select>
@@ -70,7 +72,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="color">Couleur des cheveux</label>
-                                        <md-select name="color" id="color" md-dense>
+                                        <md-select v-model="currentUser.hairColor" name="color" id="color" md-dense disabled>
                                             <md-option value="blond">Blond</md-option>
                                             <md-option value="brun">Brun</md-option>
                                         </md-select>
@@ -82,7 +84,7 @@
                             <div class="md-layout md-gutter">
 
                                 <div class="md-layout-item md-small-size-100">
-                                    <img :src="getImage(this.avatarUrl)" alt="avatar-selection" />
+                                    <img :src="getImage(userAvatar)" alt="avatar-selection" />
                                 </div>
 
                             </div>
@@ -98,6 +100,16 @@
                                         <md-icon class="md-size-2x">arrow_right</md-icon>
                                     </md-button>
                                 </div>
+
+                            </div>
+
+                            <div class="md-layout md-gutter md-alignment-center-center">
+
+                                <md-button>
+                                    <router-link to="/">
+                                        Retour
+                                    </router-link>
+                                </md-button>
 
                             </div>
                         </md-card-content>
@@ -130,22 +142,7 @@
         data () {
             return {
                 currentUser: null,
-                currentAvatar: null,
-                avatarUrl: null,
-                avatarsArray: [
-                    '../assets/masculin.brun.png',
-                    '../assets/masculin.blond.png',
-                    '../assets/feminin.brun.png',
-                    '../assets/feminin.blond.png'
-                ]
-                /*sex: [
-                    'masculin',
-                    'feminin'
-                ],
-                hairColor: [
-                    'brun',
-                    'blond'
-                ]*/
+                currentAvatar: null
             }
         },
         props: ['avatar'],
@@ -153,15 +150,16 @@
             ...mapState({
                 account: state => state.account,
                 users: state => state.users.all
-            })
+            }),
+            userAvatar: function () {
+                return this.currentUser.genre + '.' + this.currentUser.hairColor + '.png'
+            }
         },
         created () {
-            this.avatarUrl = this.$route.params.avatar
             this.currentUser = this.account.user
-            //this.avatarUrl = '../assets/'
 
             console.log(this.currentUser)
-            console.log('Current avatar URL: ', this.avatarUrl)
+            console.log('Current avatar URL: ', this.userAvatar)
         },
         methods: {
             updateAvatar(reverse) {
@@ -175,8 +173,7 @@
                 }*/
             },
             getImage(path) {
-                //return path ? require(path) : require('../assets/masculin.brun.png')
-                return require('../assets/masculin.brun.png')
+                return path ? require(`../assets/${path}`) : ''
             }
         }
     }

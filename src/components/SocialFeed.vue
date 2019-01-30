@@ -4,9 +4,9 @@
         <!-- Top toolbar -->
         <md-toolbar class="md-primary" md-elevation="0">
             <div class="md-toolbar-section-start">
-                <router-link to="/">
+                <router-link :to="{ name: 'profile' }">
                     <md-button class="md-icon-button">
-                        <md-icon>home</md-icon>
+                        <md-icon>person</md-icon>
                     </md-button>
                 </router-link>
             </div>
@@ -17,7 +17,9 @@
                 </md-button>
 
                 <router-link to="/login">
-                    <md-button>Déconnexion</md-button>
+                    <md-button class="md-icon-button">
+                        <md-icon>power_settings_new</md-icon>
+                    </md-button>
                 </router-link>
             </div>
 
@@ -28,12 +30,14 @@
             <div class="md-layout">
 
                 <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                    <span class="md-headline md-layout md-alignment-center-center">Actualités</span>
+                    <span class="md-headline md-layout md-alignment-center-center">Quoi de neuf sur Facebook ?</span>
                 </div>
 
                 <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
                     <hr />
                 </div>
+
+                <!-- TODO: Make request to Facebook Developers to be able to use GraphAPI and fetch MLOA's page -->
 
             </div>
         </div>

@@ -74,7 +74,7 @@
 
             </div>
 
-            <div v-else class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+            <div v-if="!tasks.items" class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
                 <span class="md-subheading">Aucune tâche à effectuer aujourd'hui, bravo !</span>
             </div>
 
@@ -238,7 +238,7 @@
     }
 
     .tasks-list {
-        margin-bottom: 26px;
+        margin-bottom: 56px;
         padding-top: 25px;
         height: 100vh;
         width: 100%;

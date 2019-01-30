@@ -93,10 +93,9 @@
                     if (valid) {
                         console.log('New Task : ',  this.task)
 
-
                         this.task.updatedAt = Date.now()
 
-                        this.editTask(this.taskToUpdate)
+                        this.editTask(this.task)
                     }
                 })
                 this.$emit('close')

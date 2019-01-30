@@ -6,14 +6,14 @@ import router from '../router'
 const currentUser = JSON.parse(localStorage.getItem('user'))
 
 // Log current user fetched
-console.log(currentUser)
+//console.log(currentUser)
 
 const state = {
     all: {},
     status: {}
 }
 
-console.log(state)
+//console.log(state)
 
 const actions = {
     getAll({ commit }) {
@@ -80,17 +80,17 @@ const actions = {
 
         // Add or remove XP if Task was checked/ unchecked
         if (task.completed === true) {
-            newStats.totalExp += (task.grantExp * task.difficulty)
+            newStats.currentExp += (task.grantExp * task.difficulty)
             newStats.completedTasks++
         }
         else {
-            newStats.totalExp -= (task.grantExp * task.difficulty)
+            newStats.currentExp -= (task.grantExp * task.difficulty)
             newStats.completedTasks--
         }
 
         // Level up if totalXP of user is superior to the amount of XP to level up
-        if (newStats.totalExp >= experienceToNextLevel(newStats.currentLevel)) {
-            newStats.currentLevel++
+        if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
+            newStats.jobLevel++
         }
 
         // Update User stats with local modifications to server
@@ -100,7 +100,7 @@ const actions = {
                 user => {
                     commit('updateUserSuccess', user)
 
-                    // Update local user too, so that it
+                    // Update local user too
                     localStorage.setItem('user', JSON.stringify(newStats))
 
                     router.push('/')

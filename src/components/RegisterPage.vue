@@ -13,24 +13,32 @@
                     <div class="md-layout md-gutter md-alignment-center-center">
                         <div class="md-layout-item md-gutter md-small-size-100">
 
-                            <md-field :class="{ 'md-invalid': submitted && errors.has('firstName') }">
+                            <!-- <md-field :class="{ 'md-invalid': submitted && errors.has('firstName') }">
                                 <label>Prénom</label>
                                 <md-input v-model="user.firstName" v-validate="'required'" name="firstName" />
-                                <span class="md-error" v-if="submitted && errors.has('firstName')">{{ errors.first('firstName') }}</span>
+                                <span class="md-error" v-if="submitted && errors.has('firstName')">{{ errors.first('firstName') }}</span> -->
                                 <!-- <div v-if="submitted && errors.has('firstName')" class="invalid-feedback">{{ errors.first('firstName') }}</div> -->
-                            </md-field>
+                            <!-- </md-field>
                             <md-field :class="{ 'md-invalid': submitted && errors.has('lastName') }">
                                 <label>Nom</label>
                                 <md-input v-model="user.lastName" v-validate="'required'" name="lastName" />
-                                <span class="md-error" v-if="submitted && errors.has('lastName')">{{ errors.first('lastName') }}</span>
+                                <span class="md-error" v-if="submitted && errors.has('lastName')">{{ errors.first('lastName') }}</span> -->
                                 <!-- <div v-if="submitted && errors.has('lastName')" class="invalid-feedback">{{ errors.first('lastName') }}</div> -->
+                            <!-- </md-field> -->
+
+                            <md-field :class="{ 'md-invalid': submitted && errors.has('email') }">
+                                <label>E-mail</label>
+                                <md-input v-model="user.email" v-validate="'required'" name="email" />
+                                <span class="md-error" v-if="submitted && errors.has('email')">{{ errors.first('email') }}</span>
                             </md-field>
+
                             <md-field :class="{ 'md-invalid': submitted && errors.has('username') }">
                                 <label>Nom d'utilisateur</label>
                                 <md-input v-model="user.username" v-validate="'required'" name="username" />
                                 <span class="md-error" v-if="submitted && errors.has('username')">{{ errors.first('username') }}</span>
                                 <!-- <div v-if="submitted && errors.has('username')" class="invalid-feedback">{{ errors.first('username') }}</div> -->
                             </md-field>
+
                             <md-field md-has-password :class="{ 'md-invalid': submitted && errors.has('password') }">
                                 <label>Mot de passe</label>
                                 <md-input type="password" v-model="user.password" v-validate="{ required: true, min: 6 }" name="password" />
@@ -67,8 +75,7 @@
         data () {
             return {
                 user: {
-                    firstName: '',
-                    lastName: '',
+                    email: '',
                     username: '',
                     password: ''
                 },

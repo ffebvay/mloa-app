@@ -12,11 +12,18 @@
                     <div class="md-layout md-gutter md-alignment-center-center">
                         <div class="md-layout-item md-gutter md-small-size-100">
 
-                            <md-field :class="{ 'md-invalid': submitted && !username }">
+                            <!--<md-field :class="{ 'md-invalid': submitted && !username }">
                                 <label>Nom d'utilisateur</label>
                                 <md-input v-model="username" name="username" />
-                                <span class="md-error" v-show="submitted && !username">Le nom d'utilisateur est requis</span>
+                                <span class="md-error" v-show="submitted && !username">Le nom d'utilisateur est requis</span>-->
                                 <!-- <div v-show="submitted && !username" class="invalid-feedback">Username is required</div> -->
+                            <!--</md-field>-->
+
+                            <md-field :class="{ 'md-invalid': submitted && !email }">
+                                <label>E-mail</label>
+                                <md-input v-model="email" name="email" />
+                                <span class="md-error" v-show="submitted && !email">L'email est requis</span>
+                                <!-- <div v-show="submitted && !password" class="invalid-feedback">Password is required</div> -->
                             </md-field>
 
                             <md-field md-has-password :class="{ 'md-invalid': submitted && !password }">
@@ -53,7 +60,7 @@
         name: "LoginPage",
         data () {
             return {
-                username: '',
+                email: '',
                 password: '',
                 submitted: false
             }
@@ -69,10 +76,10 @@
             ...mapActions('account', ['login', 'logout']),
             handleSubmit (e) {
                 this.submitted = true
-                const { username, password } = this
+                const { email, password } = this
 
-                if (username && password) {
-                    this.login({ username, password })
+                if (email && password) {
+                    this.login({ email, password })
                 }
             }
         }

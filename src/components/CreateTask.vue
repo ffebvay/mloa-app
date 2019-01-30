@@ -4,9 +4,9 @@
         <!-- Top toolbar -->
         <md-toolbar class="md-primary" md-elevation="0">
             <div class="md-toolbar-section-start">
-                <router-link to="/">
+                <router-link :to="{ name: 'profile' }">
                     <md-button class="md-icon-button">
-                        <md-icon>home</md-icon>
+                        <md-icon>person</md-icon>
                     </md-button>
                 </router-link>
             </div>
@@ -17,7 +17,9 @@
                 </md-button>
 
                 <router-link to="/login">
-                    <md-button>Déconnexion</md-button>
+                    <md-button class="md-icon-button">
+                        <md-icon>power_settings_new</md-icon>
+                    </md-button>
                 </router-link>
             </div>
 

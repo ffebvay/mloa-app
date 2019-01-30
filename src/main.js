@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VeeValidate from 'vee-validate'
+import VueTour from 'vue-tour'
 
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
@@ -16,6 +17,10 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(VeeValidate)
 Vue.use(VueMaterial)
+
+// used to provide a tutorial to users
+require('vue-tour/dist/vue-tour.css')
+Vue.use(VueTour)
 
 // used to prevent the 'cannot read property 'options' of undefined'
 // thorwn when trying to add the property 'to' to the
