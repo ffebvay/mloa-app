@@ -60,6 +60,26 @@
                                     </md-select>
                                 </md-field>
 
+                                <div class="md-layout checklist-group">
+
+                                    <label class="md-title">Liste de vérification</label>
+
+                                    <md-field v-for="(item, $index) in checklist" :key="item._id">
+                                        <md-input type="text" v-model="item.text"></md-input>
+                                        <md-button class="md-icon-button" @click="removeChecklistItem($index)">
+                                            <md-icon>delete</md-icon>
+                                        </md-button>
+                                    </md-field>
+
+                                    <md-field>
+                                        <md-icon>add_circle_outline</md-icon>
+                                        <label>Ajouter un élément...</label>
+
+                                        <md-input type="text" v-model="newChecklistItem" @keydown.enter="addChecklistItem($event)" :placeholder="newChecklistItem"></md-input>
+                                    </md-field>
+
+                                </div>
+
                             </div>
                         </div>
 
@@ -104,6 +124,7 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
+    import clone from 'lodash/clone'
 
     export default {
         name: "CreateTask",
@@ -113,9 +134,12 @@
                     userId: '',
                     text: '',
                     description: '',
-                    difficulty: ''
+                    difficulty: '',
+                    checklist: []
                 },
-                submitted: false
+                submitted: false,
+                newChecklistItem: null,
+                checklist: []
             }
         },
         computed: {
@@ -133,6 +157,22 @@
                 getAllUsers: 'getAll'
             }),
             ...mapActions('tasks', ['addTask']),
+            addChecklistItem(e) {
+                let checklistItem = {
+                    text: this.newChecklistItem,
+                    completed: false
+                }
+
+                this.task.checklist.push(checklistItem)
+                this.checklist.push(checklistItem)
+                this.newChecklistItem = null
+
+                if (e) e.preventDefault()
+            },
+            removeChecklistItem(i) {
+                this.task.checklist.splice(i, 1)
+                this.checklist = clone(this.task.checklist)
+            },
             handleSubmit(e) {
                 this.submitted = true;
                 this.$validator.validate().then(valid => {
@@ -152,6 +192,10 @@
     .create-task {
         height: 100vh;
         overflow-x: hidden;
+    }
+
+    .md-card {
+        margin-bottom: 56px;
     }
 
     .form-container {
@@ -174,6 +218,10 @@
         right: 0;
         bottom: 56px;
         z-index: 9999;
+    }
+
+    .checklist-group {
+        margin-top: 50px;
     }
 
     div > form {

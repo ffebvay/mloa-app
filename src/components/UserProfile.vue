@@ -4,9 +4,9 @@
         <!-- Top toolbar -->
         <md-toolbar class="md-primary" md-elevation="0">
             <div class="md-toolbar-section-start">
-                <router-link :to="{ name: 'profile' }">
+                <router-link to="/">
                     <md-button class="md-icon-button">
-                        <md-icon>person</md-icon>
+                        <md-icon>home</md-icon>
                     </md-button>
                 </router-link>
             </div>

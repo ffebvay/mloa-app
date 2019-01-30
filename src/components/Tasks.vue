@@ -58,8 +58,20 @@
                             </md-card-header>
 
                             <md-card-content v-if="task.description">
-                                <div>
+                                <div class="md-body-1">
                                     {{ task.description }}
+                                </div>
+
+                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
+                                    <md-list>
+                                        <md-subheader>Liste de vérification</md-subheader>
+
+                                        <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
+                                            <!-- TODO: Add onChange event when checkbox item is checked -->
+                                            <md-checkbox v-model="item.completed"></md-checkbox>
+                                            <span class="md-list-item-text">{{item.text}}</span>
+                                        </md-list-item>
+                                    </md-list>
                                 </div>
                             </md-card-content>
 
@@ -137,8 +149,20 @@
                             </md-card-header>
 
                             <md-card-content v-if="task.description">
-                                <div>
+                                <div class="md-body-1">
                                     {{ task.description }}
+                                </div>
+
+                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
+                                    <md-list>
+                                        <md-subheader>Liste de vérification</md-subheader>
+
+                                        <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
+                                            <!-- TODO: Add onChange event when checkbox item is checked -->
+                                            <md-checkbox v-model="item.completed"></md-checkbox>
+                                            <span class="md-list-item-text">{{item.text}}</span>
+                                        </md-list-item>
+                                    </md-list>
                                 </div>
                             </md-card-content>
 
@@ -274,5 +298,13 @@
         display: block;
         margin: 15px;
         text-align: left;
+    }
+
+    .check-control {
+        margin-top: 30px;
+    }
+
+    .md-list {
+        background-color: #85cce3 !important;
     }
 </style>
