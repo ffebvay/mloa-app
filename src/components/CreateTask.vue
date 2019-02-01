@@ -80,6 +80,16 @@
 
                                 </div>
 
+                                <div class="md-layout date-group">
+
+                                    <label class="md-title">Échéance</label>
+
+                                    <md-datepicker v-model="task.dueDate">
+                                        <label>Sélectionner une date...</label>
+                                    </md-datepicker>
+
+                                </div>
+
                             </div>
                         </div>
 
@@ -135,7 +145,8 @@
                     text: '',
                     description: '',
                     difficulty: '',
-                    checklist: []
+                    checklist: [],
+                    dueDate: null
                 },
                 submitted: false,
                 newChecklistItem: null,
@@ -195,7 +206,7 @@
     }
 
     .md-card {
-        margin-bottom: 56px;
+        margin-bottom: 75px;
     }
 
     .form-container {
@@ -222,6 +233,10 @@
 
     .checklist-group {
         margin-top: 50px;
+    }
+
+    .date-group {
+        margin-top: 24px;
     }
 
     div > form {

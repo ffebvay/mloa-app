@@ -21,7 +21,7 @@
 
                             <md-field :class="{ 'md-invalid': submitted && !email }">
                                 <label>E-mail</label>
-                                <md-input v-model="email" name="email" />
+                                <md-input v-model.trim="email" name="email" />
                                 <span class="md-error" v-show="submitted && !email">L'email est requis</span>
                                 <!-- <div v-show="submitted && !password" class="invalid-feedback">Password is required</div> -->
                             </md-field>

@@ -57,8 +57,8 @@
                                 </md-menu>
                             </md-card-header>
 
-                            <md-card-content v-if="task.description">
-                                <div class="md-body-1">
+                            <md-card-content>
+                                <div class="md-body-1" v-if="task.description">
                                     {{ task.description }}
                                 </div>
 
@@ -68,14 +68,20 @@
 
                                         <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
                                             <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed"></md-checkbox>
+                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateElement(task))"></md-checkbox>
                                             <span class="md-list-item-text">{{item.text}}</span>
                                         </md-list-item>
                                     </md-list>
                                 </div>
+
+                                <!-- Due date -->
+                                <div v-if="task.dueDate" class="due-date-text">
+                                    <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
+                                    Échéance : le {{task.dueDate}}
+                                </div>
                             </md-card-content>
 
-                            <md-card-actions class="md-layout md-alignment-bottom-right">
+                            <md-card-actions class="md-layout md-alignment-center-center">
                                 <div class="check-container">
                                     <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
                                 </div>
@@ -148,25 +154,31 @@
                                 </md-menu>
                             </md-card-header>
 
-                            <md-card-content v-if="task.description">
-                                <div class="md-body-1">
+                            <md-card-content>
+                                <div class="md-body-1" v-if="task.description">
                                     {{ task.description }}
                                 </div>
 
-                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
+                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control gray-card">
                                     <md-list>
                                         <md-subheader>Liste de vérification</md-subheader>
 
                                         <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
                                             <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed"></md-checkbox>
+                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateElement(task))"></md-checkbox>
                                             <span class="md-list-item-text">{{item.text}}</span>
                                         </md-list-item>
                                     </md-list>
                                 </div>
+
+                                <!-- Due date -->
+                                <div v-if="task.dueDate" class="due-date-text">
+                                    <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
+                                    Échéance : {{taskDueDate(task.dueDate)}}
+                                </div>
                             </md-card-content>
 
-                            <md-card-actions class="md-layout md-alignment-bottom-right">
+                            <md-card-actions class="md-layout md-alignment-center-center">
                                 <div class="check-container">
                                     <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
                                 </div>
@@ -208,7 +220,10 @@
                 account: state => state.account,
                 tasks: state => state.tasks.all,
                 users: state => state.users.all
-            })
+            }),
+            taskDueDate: function(datetime) {
+                return datetime.toString()
+            }
         },
         created () {
             this.getAllTasks(this.account.user._id)
@@ -218,12 +233,16 @@
             setTimeout(() => {
                     this.getLoggedUser(this.account.user._id)
                 }, 1000)
+
+            console.log(this.tasks.items)
+            console.log(this.tasks.items[1].dueDate.toString())
         },
         methods: {
             ...mapActions('tasks', {
                 getAllTasks: 'getAllByUser',
                 getSpecificTask: 'getTask',
                 markDone: 'completeTask',
+                updateChecklistItem: 'editTask',
                 deleteSelected: 'deleteTask'
             }),
             ...mapActions('account', {
@@ -233,10 +252,22 @@
             ...mapActions('users', {
                 getAllUsers: 'getAll'
             }),
+            updateElement(task) {
+                this.currentTask = task
+
+                // update date of modification
+                this.currentTask.updatedAt = Date.now()
+
+                setTimeout(() => {
+                    this.updateChecklistItem(this.currentTask),
+                    500
+                })
+            },
             updateTask: function(task) {
                 this.currentTask = task
                 this.currentTaskId = task._id
                 this.showDialog = true
+                this.$parent.showEdit = true
             },
             deleteTask: function(taskId) {
                 this.deleteSelected(taskId)
@@ -247,6 +278,7 @@
             },
             onClose: function() {
                 this.showDialog = false
+                this.$parent.showEdit = false
 
                 // Only solution I found to force re-render upon Edit Dialog closing...
                 setTimeout(() =>
@@ -304,7 +336,27 @@
         margin-top: 30px;
     }
 
-    .md-list {
+    .md-card {
+        background: #fff !important;
+    }
+
+    .md-card-actions {
+        background: #85e3cb !important;
+    }
+
+    .md-checkbox {
+        margin: 16px;
+    }
+
+    /*.md-list {
         background-color: #85cce3 !important;
+    }*/
+
+    .gray-card > .md-list {
+        background-color: darkgray !important;
+    }
+
+    .due-date-text {
+        color: red;
     }
 </style>

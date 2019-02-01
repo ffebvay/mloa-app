@@ -37,6 +37,13 @@
                     <hr />
                 </div>
 
+                <md-empty-state
+                        md-icon="work_off"
+                        md-label="Page en développement"
+                        md-description="En raison de difficultés techniques, nous ne pouvons afficher de contenu dans cette section pour le moment.">
+
+                </md-empty-state>
+
             </div>
         </div>
 

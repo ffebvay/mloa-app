@@ -67,7 +67,7 @@
         </div>
 
         <!-- Add task button -->
-        <div v-if="!showWelcome" class="md-layout md-alignment-center-center fixed-fab v-step-4 v-step-6">
+        <div v-if="(!showWelcome && !showEdit)" class="md-layout md-alignment-center-center fixed-fab v-step-4 v-step-6">
 
             <router-link to="/task">
                 <md-button class="md-fab">
@@ -108,6 +108,7 @@
             return {
                 userId: '',
                 showWelcome: false,
+                showEdit: false, // used to hide the Fixed "+" button when the Edit Dialog opens
                 steps: [
                     {
                         target: '.v-step-1',
@@ -196,9 +197,6 @@
             if (this.account.user.flags.welcomed === false) {
                 this.showWelcome = true
             }
-        },
-        mounted () {
-            // TODO: Add instructional steps
         },
         methods: {
             ...mapActions('users', {

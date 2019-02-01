@@ -28,13 +28,13 @@
 
                             <md-field :class="{ 'md-invalid': submitted && errors.has('email') }">
                                 <label>E-mail</label>
-                                <md-input v-model="user.email" v-validate="'required'" name="email" />
+                                <md-input v-model.trim="user.email" v-validate="'required'" name="email" />
                                 <span class="md-error" v-if="submitted && errors.has('email')">{{ errors.first('email') }}</span>
                             </md-field>
 
                             <md-field :class="{ 'md-invalid': submitted && errors.has('username') }">
                                 <label>Nom d'utilisateur</label>
-                                <md-input v-model="user.username" v-validate="'required'" name="username" />
+                                <md-input v-model.trim="user.username" v-validate="'required'" name="username" />
                                 <span class="md-error" v-if="submitted && errors.has('username')">{{ errors.first('username') }}</span>
                                 <!-- <div v-if="submitted && errors.has('username')" class="invalid-feedback">{{ errors.first('username') }}</div> -->
                             </md-field>

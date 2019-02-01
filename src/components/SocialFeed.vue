@@ -30,7 +30,7 @@
             <div class="md-layout">
 
                 <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                    <span class="md-headline md-layout md-alignment-center-center">Quoi de neuf sur Facebook ?</span>
+                    <span class="md-headline md-layout md-alignment-center-center">Quoi de neuf ?</span>
                 </div>
 
                 <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
@@ -38,6 +38,13 @@
                 </div>
 
                 <!-- TODO: Make request to Facebook Developers to be able to use GraphAPI and fetch MLOA's page -->
+
+                <md-empty-state
+                    md-icon="work_off"
+                    md-label="Page en développement"
+                    md-description="En raison de difficultés techniques, nous ne pouvons afficher de contenu dans cette section pour le moment.">
+
+                </md-empty-state>
 
             </div>
         </div>

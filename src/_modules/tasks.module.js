@@ -5,15 +5,10 @@ import router from '../router'
 
 const currentUser = JSON.parse(localStorage.getItem('user'))
 
-// Log current user fetched
-//console.log(currentUser)
-
 const state = {
     all: {},
     status: {}
 }
-
-//console.log(state)
 
 const actions = {
     getAll({ commit }) {
@@ -69,6 +64,9 @@ const actions = {
         let newStats = currentUser
         const tId = task._id
 
+        // Checklist bonuses
+        let checklistXP = 0
+
         // Update selected Task "completed" status
         taskService.update(task)
             .then(
@@ -80,13 +78,42 @@ const actions = {
 
         // Add or remove XP if Task was checked/ unchecked
         if (task.completed === true) {
-            newStats.currentExp += (task.grantExp * task.difficulty)
+            // if task contains a checklist
+            if (task.checklist && task.checklist.length > 0) {
+                task.checklist.forEach(function(item) {
+                    // foreach subtask, if the item was checked => give 2 XP bonus
+                    if (item.completed === true) {
+                        checklistXP += 2
+                    }
+                })
+            }
+
+            newStats.currentExp += ((task.grantExp * task.difficulty) + checklistXP)
+
+            //newStats.currentExp += (task.grantExp * task.difficulty)
             newStats.completedTasks++
         }
         else {
-            newStats.currentExp -= (task.grantExp * task.difficulty)
-            newStats.completedTasks--
+            // if task contains a checklist
+            if (task.checklist && task.checklist.length > 0) {
+                task.checklist.forEach(function(item) {
+                    // foreach subtask, if the item was checked => remove the 2 XP bonus
+                    if (item.completed === true) {
+                        checklistXP += 2
+                    }
+                })
+            }
+
+            // check if total of XP is negative
+            newStats.currentExp - ((task.grantExp * task.difficulty) + checklistXP) < 0 ?
+                newStats.currentExp = 0
+                : newStats.currentExp -= ((task.grantExp * task.difficulty) + checklistXP)
+
+            // update completed tasks counter always greater than 0 !
+            newStats.completedTasks - 1 < 0 ? newStats.completedTasks = 0 : newStats.completedTasks--
         }
+
+        console.log(`Experience about to be added to the player's job level : ${newStats.currentExp} XP`)
 
         // Level up if totalXP of user is superior to the amount of XP to level up
         if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
@@ -121,7 +148,7 @@ const actions = {
                     router.push('/')
                     setTimeout(() => {
                         // display success message after route change completes
-                        // dispatch('alert/success', 'Tâche ajoutée', { root: true })
+                        // dispatch('alert/success', 'Tâche modifiée', { root: true })
                     })
                 },
                 error => {
