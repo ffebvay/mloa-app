@@ -127,6 +127,7 @@ const mutations = {
     },
     updateUserRequest(state, user) {
         state.status = { updating: true }
+        state.user = user
     },
     updateUserSuccess(state, user) {
         state.status = { updated: true }

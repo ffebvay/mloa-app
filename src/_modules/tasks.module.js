@@ -58,15 +58,17 @@ const actions = {
                 }
             )
     },
-    completeTask({ commit }, task) {
+    completeTask({ commit, dispatch }, task) {
         commit('completeTaskRequest', task)
 
         // get local user logged in with its inner stats
         let newStats = currentUser
         const tId = task._id
 
-        // Checklist bonuses
+        // XP Gain/ Checklist bonuses
         let checklistXP = 0
+        let gainXP = 0
+        let snack = ''
 
         // Update selected Task "completed" status
         taskService.update(task)
@@ -92,11 +94,17 @@ const actions = {
             // calculate new earned experience
             newStats.currentExp += ((task.grantExp * task.difficulty) + checklistXP)
 
+            // store total of XP gained
+            gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+
             // increment completed tasks
             newStats.completedTasks++
 
             // set date of completion
             task.completedDate = Date.now()
+
+            // set snack message
+            snack = 'Vous avez gagné de l\'expérience : '
         }
         else {
             // if task contains a checklist
@@ -114,6 +122,9 @@ const actions = {
                 newStats.currentExp = 0
                 : newStats.currentExp -= ((task.grantExp * task.difficulty) + checklistXP)
 
+            // store total of XP lost
+            gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+
             // update completed tasks counter always greater than 0 !
             newStats.completedTasks - 1 < 0 ? newStats.completedTasks = 0 : newStats.completedTasks--
 
@@ -121,13 +132,9 @@ const actions = {
             if (task.completedDate) {
                 delete task.completedDate
             }
-        }
 
-        // +25% XP Bonus if task is done before/ at due date
-        if (task.dueDate && moment().isSameOrBefore(moment(task.dueDate))) {
-            console.log(`+25% XP Bonus : ${newStats.currentExp * 0.25} XP`)
-
-            newStats.currentExp += (newStats.currentExp * 0.25)
+            // set snack message
+            snack = 'Vous avez perdu de l\'expérience : '
         }
 
         console.log(`Player's job new experience : ${newStats.currentExp} XP`)
@@ -136,6 +143,9 @@ const actions = {
         if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
             newStats.jobLevel++
         }
+
+        // set snack message
+        snack += `${gainXP} XP`
 
         // Update User stats with local modifications to server
         // then User should be updated in localStorage when updated to DB
@@ -148,6 +158,9 @@ const actions = {
                     localStorage.setItem('user', JSON.stringify(newStats))
 
                     router.push('/')
+
+                    // display snack message
+                    dispatch('snackbar/setSnack', snack, { root: true })
                 },
                 error => {
                     commit('updateUserFailure', error)

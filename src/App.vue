@@ -9,15 +9,20 @@
           <router-view />
       </transition>
 
+      <!-- TODO: Add snackbar to notify the user whenever an action modifying the game occurs -->
+      <Snackbar></Snackbar>
+
   </div>
 </template>
 
 <script>
     import french from 'vee-validate/dist/locale/fr'
     import { mapState, mapActions } from 'vuex'
+    import Snackbar from "./components/Snackbar";
 
     export default {
         name: 'app',
+        components: {Snackbar},
         mounted: function() {
             this.$validator.localize('fr', french)
         },

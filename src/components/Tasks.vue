@@ -206,7 +206,7 @@
 
     export default {
         name: "Tasks",
-        components: {EditTask},
+        components: { EditTask },
         data: function() {
             return {
                 showDialog: false,
@@ -230,9 +230,6 @@
             setTimeout(() => {
                     this.getLoggedUser(this.account.user._id)
                 }, 1000)
-
-            // TODO
-            console.log(this.tasks.items)
         },
         methods: {
             ...mapActions('tasks', {
@@ -249,6 +246,7 @@
             ...mapActions('users', {
                 getAllUsers: 'getAll'
             }),
+            ...mapActions('snackbar', ['setSnack']),
             updateChecklist(task) {
                 this.currentTask = task
 

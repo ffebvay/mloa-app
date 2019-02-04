@@ -100,7 +100,6 @@
     import Tasks from "./Tasks"
     import WelcomeDialog from "./WelcomeDialog"
     import { experienceToNextLevel } from '../_helpers'
-
     export default {
         name: "HomePage",
         components: { WelcomeDialog, Tasks },
