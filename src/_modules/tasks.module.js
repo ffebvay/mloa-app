@@ -2,6 +2,7 @@ import {taskService} from '../_services'
 import {userService} from '../_services'
 import { experienceToNextLevel } from "../_helpers/gameHelpers"
 import router from '../router'
+const moment = require('moment')
 
 const currentUser = JSON.parse(localStorage.getItem('user'))
 
@@ -88,10 +89,14 @@ const actions = {
                 })
             }
 
+            // calculate new earned experience
             newStats.currentExp += ((task.grantExp * task.difficulty) + checklistXP)
 
-            //newStats.currentExp += (task.grantExp * task.difficulty)
+            // increment completed tasks
             newStats.completedTasks++
+
+            // set date of completion
+            task.completedDate = Date.now()
         }
         else {
             // if task contains a checklist
@@ -111,9 +116,21 @@ const actions = {
 
             // update completed tasks counter always greater than 0 !
             newStats.completedTasks - 1 < 0 ? newStats.completedTasks = 0 : newStats.completedTasks--
+
+            // if completedDate is set, delete it
+            if (task.completedDate) {
+                delete task.completedDate
+            }
         }
 
-        console.log(`Experience about to be added to the player's job level : ${newStats.currentExp} XP`)
+        // +25% XP Bonus if task is done before/ at due date
+        if (task.dueDate && moment().isSameOrBefore(moment(task.dueDate))) {
+            console.log(`+25% XP Bonus : ${newStats.currentExp * 0.25} XP`)
+
+            newStats.currentExp += (newStats.currentExp * 0.25)
+        }
+
+        console.log(`Player's job new experience : ${newStats.currentExp} XP`)
 
         // Level up if totalXP of user is superior to the amount of XP to level up
         if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {

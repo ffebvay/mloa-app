@@ -21,7 +21,7 @@
 
                 <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
 
-                    <md-card v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary" :class="{'gray-card': task.completed}">
+                    <md-card v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary white-bg">
                         <md-ripple>
                             <md-card-header>
                                 <md-card-header-text>
@@ -68,7 +68,7 @@
 
                                         <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
                                             <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateElement(task))"></md-checkbox>
+                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
                                             <span class="md-list-item-text">{{item.text}}</span>
                                         </md-list-item>
                                     </md-list>
@@ -77,7 +77,7 @@
                                 <!-- Due date -->
                                 <div v-if="task.dueDate" class="due-date-text">
                                     <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
-                                    Échéance : le {{task.dueDate}}
+                                    Échéance : {{ task.dueDate | moment("from") }}
                                 </div>
                             </md-card-content>
 
@@ -165,7 +165,7 @@
 
                                         <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
                                             <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateElement(task))"></md-checkbox>
+                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
                                             <span class="md-list-item-text">{{item.text}}</span>
                                         </md-list-item>
                                     </md-list>
@@ -174,7 +174,7 @@
                                 <!-- Due date -->
                                 <div v-if="task.dueDate" class="due-date-text">
                                     <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
-                                    Échéance : {{taskDueDate(task.dueDate)}}
+                                    Échéance : {{ task.dueDate | moment("from") }}
                                 </div>
                             </md-card-content>
 
@@ -220,10 +220,7 @@
                 account: state => state.account,
                 tasks: state => state.tasks.all,
                 users: state => state.users.all
-            }),
-            taskDueDate: function(datetime) {
-                return datetime.toString()
-            }
+            })
         },
         created () {
             this.getAllTasks(this.account.user._id)
@@ -234,8 +231,8 @@
                     this.getLoggedUser(this.account.user._id)
                 }, 1000)
 
+            // TODO
             console.log(this.tasks.items)
-            console.log(this.tasks.items[1].dueDate.toString())
         },
         methods: {
             ...mapActions('tasks', {
@@ -252,7 +249,7 @@
             ...mapActions('users', {
                 getAllUsers: 'getAll'
             }),
-            updateElement(task) {
+            updateChecklist(task) {
                 this.currentTask = task
 
                 // update date of modification
@@ -294,7 +291,7 @@
     }
 
     .tasks-list {
-        margin-bottom: 56px;
+        margin-bottom: 75px;
         padding-top: 25px;
         height: 100vh;
         width: 100%;
@@ -311,7 +308,7 @@
 
     .gray-card {
         background-color: darkgray !important;
-        color: #fff !important;
+        color: lightgray !important;
     }
 
     #tasks-container {
@@ -336,7 +333,7 @@
         margin-top: 30px;
     }
 
-    .md-card {
+    .white-bg {
         background: #fff !important;
     }
 
@@ -348,12 +345,16 @@
         margin: 16px;
     }
 
-    /*.md-list {
-        background-color: #85cce3 !important;
-    }*/
-
     .gray-card > .md-list {
         background-color: darkgray !important;
+    }
+
+    .gray-card .md-subheader {
+        color: lightgray !important;
+    }
+
+    .gray-card .md-list-item-text {
+        color: lightgray !important;
     }
 
     .due-date-text {
