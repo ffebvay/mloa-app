@@ -1,10 +1,6 @@
 import {taskService} from '../_services'
-import {userService} from '../_services'
-import { experienceToNextLevel } from "../_helpers/gameHelpers"
 import router from '../router'
 const moment = require('moment')
-
-const currentUser = JSON.parse(localStorage.getItem('user'))
 
 const state = {
     all: {},
@@ -58,26 +54,39 @@ const actions = {
                 }
             )
     },
-    completeTask({ commit, dispatch }, task) {
-        commit('completeTaskRequest', task)
+    completeTask({ commit, dispatch }, params) {
+        commit('completeTaskRequest', params.task)
+
+        const tId = params.task._id
 
         // get local user logged in with its inner stats
-        let newStats = currentUser
+        /*let newStats = rootState.account.user
+        console.log(newStats)
+
         const tId = task._id
 
         // XP Gain/ Checklist bonuses
         let checklistXP = 0
         let gainXP = 0
-        let snack = ''
+        let snack = ''*/
 
         // Update selected Task "completed" status
-        taskService.update(task)
+        taskService.update(params.task)
             .then(
-                task => commit('completeTaskSuccess', task),
+                task => {
+                    commit('completeTaskSuccess', task)
+
+                    console.log('New stats : ', params.newStats)
+
+                    setTimeout(() => {
+                        dispatch('account/updateUser', params.newStats, { root: true })
+                        dispatch('snackbar/setSnack', params.snack, { root: true })
+                    })
+                },
                 error => commit('completeTaskFailure', { tId, error: error.toString() })
             )
 
-        commit('updateUserRequest', newStats)
+        /*commit('updateUserRequest', newStats)
 
         // Add or remove XP if Task was checked/ unchecked
         if (task.completed === true) {
@@ -179,7 +188,7 @@ const actions = {
                     commit('updateUserFailure', error)
                     console.log('Une erreur est survenue durant la tentative de modification des caractéristiques : ' + error)
                 }
-            )
+            )*/
     },
     editTask({ dispatch, commit }, task) {
         commit('editTaskRequest', task)
@@ -274,18 +283,18 @@ const mutations = {
     },
     deleteFailure(state, error) {
         state.status = { error }
-    },
-    updateUserRequest(state, user) {
+    }/*,
+    updateUserRequest(state) {
         state.status = { updating: true }
         state.user = user
     },
-    updateUserSuccess(state, user) {
+    updateUserSuccess(state) {
         state.status = { updated: true }
-        state.user = user
+        //state.user = user
     },
     updateUserFailure(state, error) {
         state.status = { error }
-    }
+    }*/
 }
 
 export const tasks = {

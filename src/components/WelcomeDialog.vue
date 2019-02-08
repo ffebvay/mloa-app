@@ -61,7 +61,6 @@
         },
         props: ['visible'],
         created () {
-            console.log(this.account)
             this.user = this.account.user
         },
         computed: {
@@ -104,8 +103,6 @@
                         this.updateUser(newUser)
                     }
                 })
-
-                this.$emit('close')
             }
         }
     }

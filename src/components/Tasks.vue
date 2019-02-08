@@ -83,7 +83,7 @@
 
                             <md-card-actions class="md-layout md-alignment-center-center">
                                 <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
+                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
                                 </div>
                             </md-card-actions>
                         </md-ripple>
@@ -180,7 +180,7 @@
 
                             <md-card-actions class="md-layout md-alignment-center-center">
                                 <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', markDone(task))"></md-checkbox>
+                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
                                 </div>
                             </md-card-actions>
                         </md-ripple>
@@ -203,6 +203,7 @@
 <script>
     import { mapState, mapActions } from 'vuex'
     import EditTask from "./EditTask"
+    import { experienceToNextLevel } from "../_helpers/gameHelpers"
 
     export default {
         name: "Tasks",
@@ -269,6 +270,115 @@
                 // Only solution I found to force re-render upon Task deletion...
                 setTimeout(() =>
                 { this.getAllTasks(this.account.user._id) }, 500)
+            },
+            scoreTask: function(task) {
+                let newStats = this.account.user
+
+                console.log('About to be updated : ', newStats)
+
+                // XP Gain/ Checklist bonuses
+                let checklistXP = 0
+                let gainXP = 0
+                let snack = ''
+
+                // Add or remove XP if Task was checked/ unchecked
+                if (task.completed === true) {
+                    // if task contains a checklist
+                    if (task.checklist && task.checklist.length > 0) {
+                        task.checklist.forEach(function(item) {
+                            // foreach subtask, if the item was checked => give 2 XP bonus
+                            if (item.completed === true) {
+                                checklistXP += 2
+                            }
+                        })
+                    }
+
+                    console.log(checklistXP)
+
+                    // calculate new earned experience
+                    newStats.currentExp += ((task.grantExp * task.difficulty) + checklistXP)
+
+                    // store total of XP gained
+                    gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+
+                    // increment completed tasks
+                    newStats.completedTasks++
+
+                    // set date of completion
+                    if (!task.completedDate) {
+                        task.completedDate = Date.now()
+                    }
+
+                    // set snack message
+                    snack = 'Vous avez gagné de l\'expérience : '
+                }
+                else {
+                    // if task contains a checklist
+                    if (task.checklist && task.checklist.length > 0) {
+                        task.checklist.forEach(function(item) {
+                            // foreach subtask, if the item was checked => remove the 2 XP bonus
+                            if (item.completed === true) {
+                                checklistXP += 2
+                            }
+                        })
+                    }
+
+                    // check if total of XP is negative
+                    newStats.currentExp - ((task.grantExp * task.difficulty) + checklistXP) < 0 ?
+                        newStats.currentExp = 0
+                        : newStats.currentExp -= ((task.grantExp * task.difficulty) + checklistXP)
+
+                    // store total of XP lost
+                    gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+
+                    // update completed tasks counter always greater than 0 !
+                    newStats.completedTasks - 1 < 0 ? newStats.completedTasks = 0 : newStats.completedTasks--
+
+                    // if completedDate is set, delete it
+                    if (task.completedDate) {
+                        delete task.completedDate
+                    }
+
+                    // set snack message
+                    snack = 'Vous avez perdu de l\'expérience : '
+                }
+
+                console.log(`Player's job new experience : ${newStats.currentExp} XP`)
+
+                // Level up if totalXP of user is superior to the amount of XP to level up
+                if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
+                    newStats.jobLevel++
+                }
+
+                // Stage up if new Job Level reaches 5, 10 or 15 => IT SHOULD NOT BE LESS THAN OR MORE THAN 4
+                if (newStats.stage === 1 && (newStats.jobLevel >= 5 && newStats < 10)) {
+                    newStats.stage++ // Stage 2
+                }
+                else if (newStats.stage === 2 && (newStats.jobLevel >= 10 && newStats < 15)) {
+                    newStats.stage++ // Stage 3
+                }
+                else if (newStats.stage === 3 && newStats.jobLevel >= 15) {
+                    newStats.stage++ // Stage 4
+                }
+
+                // set snack message
+                snack += `${gainXP} XP`
+
+                console.log('Snack : ', snack)
+                console.log('New stats : ', newStats)
+                console.log('Completed task : ', task)
+
+                // group parameters into one object
+                let params = {
+                    task: task,
+                    newStats: newStats,
+                    snack: snack
+                }
+
+                console.log(params)
+
+                // call action form "tasks" store
+                this.markDone(params)
             },
             onClose: function() {
                 this.showDialog = false

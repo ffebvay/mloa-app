@@ -50,6 +50,7 @@
         props: ['visible'],
         created () {
             this.user = this.account.user
+            console.log(this.user)
         },
         computed: {
             ...mapState({

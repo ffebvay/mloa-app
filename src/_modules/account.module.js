@@ -1,8 +1,8 @@
 import { userService } from '../_services'
 import router from '../router'
 
-const user = JSON.parse(localStorage.getItem('user'))
-const state = user
+let user = JSON.parse(localStorage.getItem('user'))
+let state = user
     ? { status: { loggedIn: true }, user }
     : { status: {}, user: null }
 
@@ -63,7 +63,7 @@ const actions = {
                     commit('updateUserSuccess', user)
 
                     // Update local user
-                    localStorage.setItem('user', JSON.stringify(user))
+                    //localStorage.setItem('user', JSON.stringify(userParam))
                 },
                 error => {
                     commit('updateUserFailure', error)
@@ -104,7 +104,7 @@ const mutations = {
         state.user = user
     },
     updateUserSuccess(state, user) {
-        state.status = { updated: true }
+        state.status = {}
         //state.user = user
     },
     updateUserFailure(state, error) {
