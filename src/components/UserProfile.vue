@@ -48,10 +48,20 @@
                         <md-card-content>
                             <div class="md-layout md-gutter">
 
+                                <div class="md-layout-item md-small-size-100 avatar">
+                                    <!--<img :src="getImage(userAvatar)" alt="avatar-selection" />-->
+                                    <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
+                                    <img id="avatar" alt="player-avatar"/>
+                                </div>
+
+                            </div>
+
+                            <div class="md-layout md-gutter">
+
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="username">Nom d'utilisateur</label>
-                                        <md-input name="username" id="username" v-model="account.user.username" disabled></md-input>
+                                        <md-input name="username" id="username" v-model="account.user.username"></md-input>
                                     </md-field>
                                 </div>
 
@@ -62,9 +72,20 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="gender">Genre</label>
-                                        <md-select v-model="account.user.genre" name="gender" id="gender" md-dense disabled>
-                                            <md-option value="masculin">Masculin</md-option>
-                                            <md-option value="feminin">Féminin</md-option>
+                                        <md-select v-model="account.user.genre" name="gender" id="gender" md-dense>
+                                            <md-option value="MAN">Masculin</md-option>
+                                            <md-option value="WOM">Féminin</md-option>
+                                        </md-select>
+                                    </md-field>
+                                </div>
+
+                                <div class="md-layout-item md-small-size-100">
+                                    <md-field>
+                                        <label for="color">Couleur de peau</label>
+                                        <md-select v-model="account.user.skinColor" name="color" id="color" md-dense>
+                                            <md-option value="PEACH">Pêche</md-option>
+                                            <md-option value="COFFEE">Café</md-option>
+                                            <md-option value="CHOCOLATE">Chocolat</md-option>
                                         </md-select>
                                     </md-field>
                                 </div>
@@ -72,26 +93,16 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="color">Couleur des cheveux</label>
-                                        <md-select v-model="account.user.hairColor" name="color" id="color" md-dense disabled>
-                                            <md-option value="blond">Blond</md-option>
-                                            <md-option value="brun">Brun</md-option>
+                                        <md-select v-model="account.user.hairColor" name="color" id="color" md-dense>
+                                            <md-option value="BLOND">Blond</md-option>
+                                            <md-option value="BROWN">Brun</md-option>
                                         </md-select>
                                     </md-field>
                                 </div>
 
                             </div>
 
-                            <div class="md-layout md-gutter">
-
-                                <div class="md-layout-item md-small-size-100">
-                                    <!--<img :src="getImage(userAvatar)" alt="avatar-selection" />-->
-                                    <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
-                                    <img id="avatar" alt="player-avatar"/>
-                                </div>
-
-                            </div>
-
-                            <div class="md-layout md-gutter">
+                            <!-- <div class="md-layout md-gutter">
 
                                 <div class="md-layout-item md-small-size-100">
                                     <md-button class="md-icon-button centered" @click="updateAvatar(true)">
@@ -103,7 +114,7 @@
                                     </md-button>
                                 </div>
 
-                            </div>
+                            </div> -->
 
                             <div class="md-layout md-gutter md-alignment-center-center">
 
@@ -138,34 +149,132 @@
 
 <script>
     import { mapState, mapActions } from 'vuex'
+    import mergeImages from 'merge-images'
 
     export default {
         name: "UserProfile",
         data () {
             return {
-                currentUser: null,
-                currentAvatar: null
+                avatarList: []
             }
         },
-        props: ['avatar'],
         computed: {
             ...mapState({
                 account: state => state.account,
                 users: state => state.users.all
-            })/*,
-            userAvatar: function () {
-                return this.currentUser.genre + '.' + this.currentUser.hairColor + '.png'
-            }*/
+            }),
+            userJob: function() {
+                switch(this.account.user.job) {
+                    case 'esthetique':
+                        return 'EST'
+                        break
+                    case 'agriculture':
+                        return 'AGR'
+                        break
+                    case 'transport':
+                        return 'TRS'
+                        break
+                    case 'restauration':
+                        return 'BOU'
+                        break
+                    case 'commerce':
+                        return 'COM'
+                        break
+                    case 'tourisme':
+                        return 'TOU'
+                        break
+                    case 'batiment':
+                        return 'BAT'
+                        break
+                    default:
+                        return 'COM'
+                        break
+                }
+            },
+            userStage: function() {
+                switch(this.account.user.stage) {
+                    case 1:
+                        return '01'
+                        break
+                    case 2:
+                        return '02'
+                        break
+                    case 3:
+                        return '03'
+                        break
+                    case 4:
+                        return '04'
+                        break
+                    default:
+                        return '01'
+                        break
+                }
+            },
+            skinColorPath: function() {
+                return this.account.user.genre + '.SKIN.' + this.account.user.skinColor
+            },
+            hairColorPath: function() {
+                return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+            },
+            clothesPath: function() {
+                return this.account.user.genre + '.CLOTHES01'
+            }
         },
         created () {
             console.log(this.account.user)
-            console.log('Current avatar URL: ', this.userAvatar)
 
+            // Display player's avatar by merging several sprites
+            this.pushSprites()
 
+            if (this.avatarList.length != 0) {
+                mergeImages(this.avatarList)
+                    .then(b64 => document.querySelector('img').src = b64)
+            }
+        },
+        beforeUpdate() {
+            // Display player's avatar by merging several sprites
+            this.pushSprites()
+
+            if (this.avatarList.length != 0) {
+                mergeImages(this.avatarList)
+                    .then(b64 => document.querySelector('img').src = b64)
+            }
+
+            console.log(this.account.user)
         },
         methods: {
-            getImage(path) {
-                return path ? require(`../assets/${path}`) : ''
+            ...mapActions('account', ['updateUser']),
+            updateProfile: function(user) {
+                let newUser = user
+
+                newUser.updatedAt = Date.now()
+
+                return newUser
+            },
+            pushSprites: function() {
+                // reset avatar picture
+                if (this.avatarList.length != 0) this.avatarList = []
+
+                // Add base sprites to the internal array
+                this.avatarList.push(require('@/assets/' + this.skinColorPath + '.png'))
+                this.avatarList.push(require('@/assets/' + this.hairColorPath + '.png'))
+                this.avatarList.push(require('@/assets/' + this.clothesPath + '.png'))
+
+                if (this.account.user.job !== 'sans') {
+                    this.avatarList.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.png'))
+                }
+            },
+            handleSubmit(e) {
+                this.submitted = true
+                this.$validator.validate().then(valid => {
+                    if (valid) {
+                        let newUser = this.updateProfile(this.account.user)
+
+                        console.log('User Profile edited : ', newUser)
+
+                        this.updateUser(newUser)
+                    }
+                })
             }
         }
     }
@@ -201,6 +310,22 @@
 
     .centered {
         /*margin: 0 auto;*/
+    }
+
+    .avatar {
+        background: lightslategray;
+        margin: 48px;
+    }
+
+    .avatar > img{
+        display: block;
+        height: 300px;
+        margin-left: auto;
+        margin-right: auto;
+        /*-ms-interpolation-mode: nearest-neighbor;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: pixelated;*/
+        position: relative;
     }
 
     div > form {

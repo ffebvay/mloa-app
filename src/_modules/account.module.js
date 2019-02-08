@@ -62,6 +62,7 @@ const actions = {
             .then(
                 user => {
                     commit('updateUserSuccess', user)
+                    router.push('/')
 
                     // Update local user
                     //localStorage.setItem('user', JSON.stringify(userParam))
