@@ -12,7 +12,7 @@
 
                 <md-field>
                     <label for="job">Domaine d'activité</label>
-                    <md-select v-model="user.job" name="job" id="job" md-dense>
+                    <md-select v-model="account.user.job" name="job" id="job" md-dense>
                         <md-option value="esthetique">Métiers de l'esthétique</md-option>
                         <md-option value="agriculture">Métiers de l'agriculture</md-option>
                         <md-option value="transport">Métiers de transport & maintenance</md-option>
@@ -48,10 +48,6 @@
             }
         },
         props: ['visible'],
-        created () {
-            this.user = this.account.user
-            console.log(this.user)
-        },
         computed: {
             ...mapState({
                 account: state => state.account,
@@ -81,7 +77,7 @@
                 this.submitted = true
                 this.$validator.validate().then(valid => {
                     if (valid) {
-                        let newUser = this.chooseJob(this.user)
+                        let newUser = this.chooseJob(this.account.user)
 
                         console.log('New user : ', newUser)
 

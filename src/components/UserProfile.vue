@@ -51,7 +51,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="username">Nom d'utilisateur</label>
-                                        <md-input name="username" id="username" v-model="currentUser.username" disabled></md-input>
+                                        <md-input name="username" id="username" v-model="account.user.username" disabled></md-input>
                                     </md-field>
                                 </div>
 
@@ -62,7 +62,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="gender">Genre</label>
-                                        <md-select v-model="currentUser.genre" name="gender" id="gender" md-dense disabled>
+                                        <md-select v-model="account.user.genre" name="gender" id="gender" md-dense disabled>
                                             <md-option value="masculin">Masculin</md-option>
                                             <md-option value="feminin">Féminin</md-option>
                                         </md-select>
@@ -72,7 +72,7 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field>
                                         <label for="color">Couleur des cheveux</label>
-                                        <md-select v-model="currentUser.hairColor" name="color" id="color" md-dense disabled>
+                                        <md-select v-model="account.user.hairColor" name="color" id="color" md-dense disabled>
                                             <md-option value="blond">Blond</md-option>
                                             <md-option value="brun">Brun</md-option>
                                         </md-select>
@@ -158,9 +158,7 @@
             }*/
         },
         created () {
-            this.currentUser = this.account.user
-
-            console.log(this.currentUser)
+            console.log(this.account.user)
             console.log('Current avatar URL: ', this.userAvatar)
 
 

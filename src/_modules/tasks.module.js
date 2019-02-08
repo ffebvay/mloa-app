@@ -283,18 +283,7 @@ const mutations = {
     },
     deleteFailure(state, error) {
         state.status = { error }
-    }/*,
-    updateUserRequest(state) {
-        state.status = { updating: true }
-        state.user = user
-    },
-    updateUserSuccess(state) {
-        state.status = { updated: true }
-        //state.user = user
-    },
-    updateUserFailure(state, error) {
-        state.status = { error }
-    }*/
+    }
 }
 
 export const tasks = {

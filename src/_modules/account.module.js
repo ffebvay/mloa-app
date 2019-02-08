@@ -1,7 +1,8 @@
 import { userService } from '../_services'
 import router from '../router'
 
-let user = JSON.parse(localStorage.getItem('user'))
+const user = JSON.parse(localStorage.getItem('user'))
+//let local = user
 let state = user
     ? { status: { loggedIn: true }, user }
     : { status: {}, user: null }
@@ -77,18 +78,22 @@ const mutations = {
     loginRequest(state, user) {
         state.status = { loggingIn: true }
         state.user = user
+        //state.local = user
     },
     loginSuccess(state, user) {
         state.status = { loggedIn: true }
         state.user = user
+        //state.local = user
     },
     loginFailure(state) {
         state.status = {}
         state.user = null
+        //state.local = null
     },
     logout(state) {
         state.status = {}
         state.user = null
+        //state.local = null
     },
     registerRequest(state, user) {
         state.status = { registering: true }
@@ -105,7 +110,7 @@ const mutations = {
     },
     updateUserSuccess(state, user) {
         state.status = {}
-        //state.user = user
+        //state.local = user
     },
     updateUserFailure(state, error) {
         state.status = { error }

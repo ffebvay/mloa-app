@@ -12,7 +12,7 @@
 
                 <md-field>
                     <label for="gender">Genre</label>
-                    <md-select v-model="user.genre" name="gender" id="gender" md-dense>
+                    <md-select v-model="account.user.genre" name="gender" id="gender" md-dense>
                         <md-option value="MAN">Masculin</md-option>
                         <md-option value="WOM">Féminin</md-option>
                     </md-select>
@@ -20,7 +20,7 @@
 
                 <md-field>
                     <label for="skin">Couleur de peau</label>
-                    <md-select v-model="user.skinColor" name="skin" id="skin" md-dense>
+                    <md-select v-model="account.user.skinColor" name="skin" id="skin" md-dense>
                         <md-option value="PEACH">Pêche</md-option>
                         <md-option value="COFFEE">Café</md-option>
                         <md-option value="CHOCOLATE">Chocolat</md-option>
@@ -29,7 +29,7 @@
 
                 <md-field>
                     <label for="hair">Couleur des cheveux</label>
-                    <md-select v-model="user.hairColor" name="hair" id="hair" md-dense>
+                    <md-select v-model="account.user.hairColor" name="hair" id="hair" md-dense>
                         <md-option value="BROWN">Brun</md-option>
                         <md-option value="BLOND">Blond</md-option>
                     </md-select>
@@ -60,9 +60,6 @@
             }
         },
         props: ['visible'],
-        created () {
-            this.user = this.account.user
-        },
         computed: {
             ...mapState({
                 account: state => state.account,
@@ -96,7 +93,7 @@
                 this.submitted = true
                 this.$validator.validate().then(valid => {
                     if (valid) {
-                        let newUser = this.greetUser(this.user)
+                        let newUser = this.greetUser(this.account.user)
 
                         console.log('New user : ', newUser)
 
