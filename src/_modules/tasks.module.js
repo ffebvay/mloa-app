@@ -101,7 +101,9 @@ const actions = {
             newStats.completedTasks++
 
             // set date of completion
-            task.completedDate = Date.now()
+            if (!task.completedDate) {
+                task.completedDate = Date.now()
+            }
 
             // set snack message
             snack = 'Vous avez gagné de l\'expérience : '
@@ -142,6 +144,17 @@ const actions = {
         // Level up if totalXP of user is superior to the amount of XP to level up
         if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
             newStats.jobLevel++
+        }
+
+        // Stage up if new Job Level reaches 5, 10 or 15 => IT SHOULD NOT BE LESS THAN OR MORE THAN 4
+        if (newStats.stage === 1 && (newStats.jobLevel >= 5 && newStats < 10)) {
+            newStats.stage++ // Stage 2
+        }
+        else if (newStats.stage === 2 && (newStats.jobLevel >= 10 && newStats < 15)) {
+            newStats.stage++ // Stage 3
+        }
+        else if (newStats.stage === 3 && newStats.jobLevel >= 15) {
+            newStats.stage++ // Stage 4
         }
 
         // set snack message

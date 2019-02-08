@@ -32,7 +32,10 @@
             <div class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 player-details d-flex">
 
                 <div class="avatar v-step-2">
-                    <img :src="getImage(avatarPath)" alt="avatar" />
+                    <!-- <img :src="getImage(avatarPath)" alt="player-avatar" /> -->
+
+                    <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
+                    <img id="avatar" alt="player-avatar"/>
                     <md-tooltip md-direction="bottom">Avatar</md-tooltip>
                 </div>
 
@@ -41,7 +44,7 @@
                         <h3>Bonjour {{account.user.username}} !</h3>
                     </div>
                     <div class="progress-container">
-                        <span class="md-body-1">Métier: {{userJob}}</span>
+                        <span v-if="account.user.job !== 'sans'" class="md-body-1">Métier : {{displayJob}}</span>
                         <div class="md-body-1">Niveau {{account.user.jobLevel}}</div>
 
                         <div class="xp-tip">
@@ -62,12 +65,12 @@
         <!-- Main content (list of tasks) -->
         <div class="md-layout md-gutter">
 
-            <Tasks />
+           <Tasks />
 
         </div>
 
         <!-- Add task button -->
-        <div v-if="(!showWelcome && !showEdit)" class="md-layout md-alignment-center-center fixed-fab v-step-4 v-step-6">
+        <div v-if="(!showWelcome && !showEdit && !showJobSelect)" class="md-layout md-alignment-center-center fixed-fab v-step-4 v-step-6">
 
             <router-link to="/task">
                 <md-button class="md-fab">
@@ -88,7 +91,10 @@
 
         </div>
 
-        <WelcomeDialog :visible="showWelcome" @close="onClose"/>
+        <!-- Ephemeral layouts (tutorial, welcome and job selection -->
+        <WelcomeDialog :visible="showWelcome" @close="onWelcomeDialogClose" />
+
+        <JobDialog :visible="showJobSelect" @close="onJobDialogClose" />
 
         <v-tour name="tuto" :steps="steps"></v-tour>
 
@@ -100,49 +106,53 @@
     import Tasks from "./Tasks"
     import WelcomeDialog from "./WelcomeDialog"
     import { experienceToNextLevel } from '../_helpers'
+    import mergeImages from 'merge-images'
+    import JobDialog from "./JobDialog";
+
     export default {
         name: "HomePage",
-        components: { WelcomeDialog, Tasks },
+        components: { JobDialog, WelcomeDialog, Tasks },
         data () {
             return {
-                userId: '',
                 showWelcome: false,
+                showJobSelect: false,
                 showEdit: false, // used to hide the Fixed "+" button when the Edit Dialog opens
                 steps: [
                     {
                         target: '.v-step-1',
-                        content: `Découvrez la <strong>MLOApp</strong> !`
+                        content: `Découvre la <strong>MLOApp</strong> !`
                     },
                     {
                         target: '.v-step-2',
-                        content: 'Vous trouverez ici votre avatar, à partir duquel vous pourrez suivre votre progression dans vos tâches quotidiennes.'
+                        content: 'La partie haute est consacrée à ton évolution. Tu peux y trouver ton avatar et suivre ta progression.'
                     },
                     {
                         target: '.v-step-3',
-                        content: 'Cette partie affiche des informations sur votre personnage : le niveau de votre métier, l\'expérience acquise au fil du temps et le nombre de tâches que vous avez accomplies !'
+                        content: 'Cette partie affiche des informations sur ton personnage : le niveau de ton métier, l\'expérience acquise au fil du temps et le nombre de tâches que tu auras accomplies !'
                     },
                     {
                         target: '.v-step-4',
-                        content: 'Ce bouton vous permet d\'ajouter une tâche à votre liste de choses à faire.',
+                        content: 'Ce bouton te permet d\'ajouter une tâche à ta liste de choses à faire.',
                         params: {
                             placement: 'top'
                         }
                     },
                     {
                         target: '.v-step-5',
-                        content: 'Chaque tâche que vous créez s\'ajoute ici, et celles que vous cochez dans la partie "Déjà accomplies".',
+                        content: 'Chaque tâche que tu crées s\'ajoute ici, et celles que tu complètes en les cochant apparaîtront dans la partie "Déjà accomplies".',
                         params: {
                             placement: 'top'
                         }
                     },
                     {
                         target: '.v-step-6',
-                        content: 'Enfin, ce menu vous permet de naviguer entre les différentes pages de l\'application pour vous renseigner sur votre Mission Locale préférée !',
+                        content: 'Enfin, ce menu te permettra de naviguer entre les différentes pages de l\'application pour te renseigner sur ta Mission Locale préférée !',
                         params: {
                             placement: 'top'
                         }
                     }
-                ]
+                ],
+                avatarList: [] // useful for merging sprites
             }
         },
         computed: {
@@ -156,10 +166,35 @@
             currentExperience: function () {
                 return (this.account.user.currentExp / this.experienceToGain) * 100
             },
-            avatarPath: function() {
-                return this.account.user.genre + '.' + this.account.user.hairColor + '.png'
-            },
             userJob: function() {
+                switch(this.account.user.job) {
+                    case 'esthetique':
+                        return 'EST'
+                        break
+                    case 'agriculture':
+                        return 'AGR'
+                        break
+                    case 'transport':
+                        return 'TRS'
+                        break
+                    case 'restauration':
+                        return 'BOU'
+                        break
+                    case 'commerce':
+                        return 'COM'
+                        break
+                    case 'tourisme':
+                        return 'TOU'
+                        break
+                    case 'batiment':
+                        return 'BAT'
+                        break
+                    default:
+                        return 'COM'
+                        break
+                }
+            },
+            displayJob: function() {
                 switch(this.account.user.job) {
                     case 'esthetique':
                         return 'Esthétique'
@@ -186,15 +221,64 @@
                         return 'Sans'
                         break
                 }
+            },
+            userStage: function() {
+                switch(this.account.user.stage) {
+                    case 1:
+                        return '01'
+                        break
+                    case 2:
+                        return '02'
+                        break
+                    case 3:
+                        return '03'
+                        break
+                    case 4:
+                        return '04'
+                        break
+                    default:
+                        return '01'
+                        break
+                }
+            },
+            skinColorPath: function() {
+                return this.account.user.genre + '.SKIN.' + this.account.user.skinColor
+            },
+            hairColorPath: function() {
+                return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+            },
+            clothesPath: function() {
+                return this.account.user.genre + '.CLOTHES01'
             }
         },
         created () {
-            // to pass it as a parameter for User Profile route
-            this.userId = this.account.user._id
+            console.log(this.account)
 
             // Display modal dialog on first connection and edit "user.flags.welcomed" value to "true"
             if (this.account.user.flags.welcomed === false) {
                 this.showWelcome = true
+            }
+
+            // Display player's avatar by merging several sprites
+            this.pushSprites()
+
+            if (this.avatarList.length != 0) {
+                mergeImages(this.avatarList)
+                    .then(b64 => document.querySelector('img').src = b64)
+            }
+        },
+        beforeUpdate () {
+            // Display Job Selection dialog when the user reaches Level 2
+            if (this.account.user.jobLevel === 2 && this.account.user.job === 'sans') {
+                this.showJobSelect = true
+            }
+
+            // Display player's avatar by merging several sprites
+            this.pushSprites()
+
+            if (this.avatarList.length != 0) {
+                mergeImages(this.avatarList)
+                    .then(b64 => document.querySelector('img').src = b64)
             }
         },
         methods: {
@@ -207,13 +291,31 @@
             experienceToNextLevel: function () {
                 return experienceToNextLevel(this.account.user.jobLevel)
             },
-            onClose: function() {
+            pushSprites: function() {
+                // reset avatar picture
+                if (this.avatarList.length != 0) this.avatarList = []
+
+                // Add base sprites to the internal array
+                this.avatarList.push(require('@/assets/' + this.skinColorPath + '.png'))
+                this.avatarList.push(require('@/assets/' + this.hairColorPath + '.png'))
+                this.avatarList.push(require('@/assets/' + this.clothesPath + '.png'))
+
+                if (this.account.user.job !== 'sans') {
+                    this.avatarList.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.png'))
+                }
+            },
+            onWelcomeDialogClose: function() {
                 this.showWelcome = false
+
+                // Start tutorial once the user was welcomed
                 this.$tours['tuto'].start()
             },
+            onJobDialogClose: function() {
+                this.showJobSelect = false
+            }/*,
             getImage(path) {
-                return path ? require(`../assets/${path}`) : ''
-            }
+                return path ? require('@/assets/' + path) : ''
+            }*/
         }
     }
 </script>
@@ -260,17 +362,19 @@
         background-color: #35515a;
     }
 
+    .avatar {
+        background: lightslategray;
+    }
+
     .avatar > img{
         display: block;
-        width: 100%;
-        height: auto;
+        height: 300px;
         margin-left: auto;
         margin-right: auto;
-        -ms-interpolation-mode: nearest-neighbor;
+        /*-ms-interpolation-mode: nearest-neighbor;
         image-rendering: -moz-crisp-edges;
-        image-rendering: pixelated;
+        image-rendering: pixelated;*/
         position: relative;
-        /*background-image: url(../assets/masculin.brun.png);*/
     }
 
     .player-stats {
@@ -290,5 +394,9 @@
 
     h1, h2, h3, h4, h5 {
         color: #fff;
+    }
+
+    h3 {
+        margin-bottom: 24px;
     }
 </style>

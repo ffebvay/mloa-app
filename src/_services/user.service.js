@@ -71,9 +71,6 @@ function update(user) {
         body: JSON.stringify(user)
     }
 
-    console.log(requestOptions)
-    console.log('Is it you from Client User Service ? : ', user)
-
     return fetch(`${process.env.VUE_APP_ROOT_API}/users/${user._id}`, requestOptions)
         .then(handleResponse)
         .then(user => {

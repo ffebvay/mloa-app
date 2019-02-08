@@ -3,38 +3,35 @@
 
         <md-dialog-content>
 
-            <div class="md-headline">Bienvenue à toi !</div>
-            <div class="md-caption">Choisis le métier dans lequel tu souhaites évoluer, il te sera possible d'en changer à partir du niveau 10.</div>
-            <div class="md-caption">Sélectionne ensuite les éléments d'apparence de ton avatar, ils seront modifiables sur ton profil.</div>
+            <div class="md-headline">Bienvenue à toi, nouveau joueur !</div>
+            <div class="md-caption">La première étape avant de commencer est de choisir l'apparence de ton avatar, chacun des éléments présents ici seront ensuite modifiables sur ton profil.</div><br />
+
+            <div class="md-caption">En progressant dans le jeu tu pourras accéder à de nouvelles possibilités !</div>
 
             <form id="edit-form" class="md-layout md-alignment-center-center" @submit.prevent="handleSubmit">
 
                 <md-field>
-                    <label for="job">Domaine d'activité</label>
-                    <md-select v-model="user.job" name="job" id="job" md-dense>
-                        <md-option value="esthetique">Métiers de l'esthétique</md-option>
-                        <md-option value="agriculture">Métiers de l'agriculture</md-option>
-                        <md-option value="transport">Métiers de transport & maintenance</md-option>
-                        <md-option value="restauration">Métiers de bouche</md-option>
-                        <md-option value="commerce">Métiers du commerce</md-option>
-                        <md-option value="tourisme">Métiers du tourisme</md-option>
-                        <md-option value="batiment">Métiers du bâtiment & main d'oeuvre</md-option>
+                    <label for="gender">Genre</label>
+                    <md-select v-model="user.genre" name="gender" id="gender" md-dense>
+                        <md-option value="MAN">Masculin</md-option>
+                        <md-option value="WOM">Féminin</md-option>
                     </md-select>
                 </md-field>
 
                 <md-field>
-                    <label for="gender">Genre</label>
-                    <md-select v-model="user.genre" name="gender" id="gender" md-dense>
-                        <md-option value="masculin">Masculin</md-option>
-                        <md-option value="feminin">Féminin</md-option>
+                    <label for="skin">Couleur de peau</label>
+                    <md-select v-model="user.skinColor" name="skin" id="skin" md-dense>
+                        <md-option value="PEACH">Pêche</md-option>
+                        <md-option value="COFFEE">Café</md-option>
+                        <md-option value="CHOCOLATE">Chocolat</md-option>
                     </md-select>
                 </md-field>
 
                 <md-field>
                     <label for="hair">Couleur des cheveux</label>
                     <md-select v-model="user.hairColor" name="hair" id="hair" md-dense>
-                        <md-option value="brun">Brun</md-option>
-                        <md-option value="blond">Blond</md-option>
+                        <md-option value="BROWN">Brun</md-option>
+                        <md-option value="BLOND">Blond</md-option>
                     </md-select>
                 </md-field>
 
@@ -64,6 +61,7 @@
         },
         props: ['visible'],
         created () {
+            console.log(this.account)
             this.user = this.account.user
         },
         computed: {
@@ -83,16 +81,30 @@
             }
         },
         methods: {
-            ...mapActions('account', ['welcomeUser']),
+            ...mapActions('account', ['updateUser']),
+            greetUser: function(user) {
+                let newUser = user
+
+                if (newUser.flags.welcomed === false) {
+                    newUser.flags.welcomed = true
+                }
+
+                newUser.updatedAt = Date.now()
+
+                return newUser
+            },
             handleSubmit(e) {
                 this.submitted = true
                 this.$validator.validate().then(valid => {
                     if (valid) {
-                        console.log('New user : ', this.user)
+                        let newUser = this.greetUser(this.user)
 
-                        this.welcomeUser(this.user)
+                        console.log('New user : ', newUser)
+
+                        this.updateUser(newUser)
                     }
                 })
+
                 this.$emit('close')
             }
         }

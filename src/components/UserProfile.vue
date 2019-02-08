@@ -84,7 +84,9 @@
                             <div class="md-layout md-gutter">
 
                                 <div class="md-layout-item md-small-size-100">
-                                    <img :src="getImage(userAvatar)" alt="avatar-selection" />
+                                    <!--<img :src="getImage(userAvatar)" alt="avatar-selection" />-->
+                                    <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
+                                    <img id="avatar" alt="player-avatar"/>
                                 </div>
 
                             </div>
@@ -150,28 +152,20 @@
             ...mapState({
                 account: state => state.account,
                 users: state => state.users.all
-            }),
+            })/*,
             userAvatar: function () {
                 return this.currentUser.genre + '.' + this.currentUser.hairColor + '.png'
-            }
+            }*/
         },
         created () {
             this.currentUser = this.account.user
 
             console.log(this.currentUser)
             console.log('Current avatar URL: ', this.userAvatar)
+
+
         },
         methods: {
-            updateAvatar(reverse) {
-                //let remainder =
-
-                /*if (reverse) {
-
-                }
-                else {
-
-                }*/
-            },
             getImage(path) {
                 return path ? require(`../assets/${path}`) : ''
             }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexPersistence from 'vuex-persist'
 
 import { alert } from './_modules/alert.module'
 import { snackbar } from './_modules/snackbar.module'
@@ -8,6 +9,10 @@ import { users } from './_modules/users.module'
 import { tasks } from './_modules/tasks.module'
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+    storage: window.localStorage
+})
 
 export default new Vuex.Store({
     state: {
@@ -25,5 +30,6 @@ export default new Vuex.Store({
         account,
         users,
         tasks
-    }
+    },
+    plugins: [vuexLocal.plugin]
 })

@@ -228,8 +228,8 @@
         updated () {
             // Only current way I found to update User stats once a task is completed
             setTimeout(() => {
-                    this.getLoggedUser(this.account.user._id)
-                }, 1000)
+                this.getLoggedUser(this.account.user._id)
+            }, 1000)
         },
         methods: {
             ...mapActions('tasks', {
@@ -240,7 +240,6 @@
                 deleteSelected: 'deleteTask'
             }),
             ...mapActions('account', {
-                updateStats: 'updateUser',
                 getLoggedUser: 'getCurrent'
             }),
             ...mapActions('users', {
