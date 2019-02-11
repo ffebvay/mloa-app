@@ -143,10 +143,6 @@
                                             </md-field>
                                         </div>
 
-                                    </div>
-
-                                    <div class="md-layout md-gutter">
-
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
                                                 <label for="advisor-lastname">Nom</label>
@@ -164,6 +160,7 @@
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
                                                 <label for="advisor-phone">Numéro de téléphone</label>
+                                                <span class="md-prefix">+33</span>
                                                 <md-input name="advisor-phone" id="advisor-phone" v-model="account.user.info.advisorPhone"></md-input>
                                             </md-field>
                                         </div>
