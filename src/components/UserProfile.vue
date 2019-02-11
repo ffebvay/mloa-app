@@ -12,10 +12,6 @@
             </div>
 
             <div class="md-toolbar-section-end">
-                <md-button class="md-icon-button">
-                    <md-icon>refresh</md-icon>
-                </md-button>
-
                 <router-link to="/login">
                     <md-button class="md-icon-button">
                         <md-icon>power_settings_new</md-icon>
@@ -25,115 +21,177 @@
 
         </md-toolbar>
 
-        <div class="form-container">
+        <md-tabs md-alignment="fixed" class="md-transparent" md-dynamic-height>
 
-            <!--<div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <span class="md-headline md-layout md-alignment-center-center">Mon profil</span>
-            </div>
+            <md-tab id="user-profile" md-label="Mon profil">
 
-            <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <hr />
-            </div>-->
+                <div class="form-container">
 
-            <div class="md-layout-item">
+                    <div class="md-layout-item">
 
-                <form id="profile-form" class="md-layout md-alignment-center-center" @submit.prevent="handleSubmit">
+                        <form id="profile-form" class="md-layout md-alignment-center-center" @submit.prevent="handleSubmit">
 
-                    <md-card class="md-layout-item md-gutter md-size-50 md-small-size-100">
+                            <md-card class="md-layout-item md-gutter md-size-50 md-small-size-100">
 
-                        <md-card-header>
-                            <div class="md-title">Mon profil</div>
-                        </md-card-header>
+                                <md-card-header>
+                                    <div class="md-title">Mon profil</div>
+                                </md-card-header>
 
-                        <md-card-content>
-                            <div class="md-layout md-gutter">
+                                <md-card-content>
+                                    <div class="md-layout md-gutter">
 
-                                <div class="md-layout-item md-small-size-100 avatar">
-                                    <!--<img :src="getImage(userAvatar)" alt="avatar-selection" />-->
-                                    <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
-                                    <img id="avatar" alt="player-avatar"/>
-                                </div>
+                                        <div class="md-layout-item md-small-size-100 avatar">
+                                            <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
+                                            <img id="avatar" alt="player-avatar"/>
+                                        </div>
 
-                            </div>
+                                    </div>
 
-                            <div class="md-layout md-gutter">
+                                    <div class="md-layout md-gutter">
 
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-field>
-                                        <label for="username">Nom d'utilisateur</label>
-                                        <md-input name="username" id="username" v-model="account.user.username"></md-input>
-                                    </md-field>
-                                </div>
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="username">Nom d'utilisateur</label>
+                                                <md-input name="username" id="username" v-model="account.user.username"></md-input>
+                                            </md-field>
+                                        </div>
 
-                            </div>
+                                    </div>
 
-                            <div class="md-layout md-gutter">
+                                    <div class="md-layout md-gutter">
 
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-field>
-                                        <label for="gender">Genre</label>
-                                        <md-select v-model="account.user.genre" name="gender" id="gender" md-dense>
-                                            <md-option value="MAN">Masculin</md-option>
-                                            <md-option value="WOM">Féminin</md-option>
-                                        </md-select>
-                                    </md-field>
-                                </div>
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="gender">Genre</label>
+                                                <md-select v-model="account.user.genre" name="gender" id="gender" md-dense>
+                                                    <md-option value="MAN">Masculin</md-option>
+                                                    <md-option value="WOM">Féminin</md-option>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
 
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-field>
-                                        <label for="color">Couleur de peau</label>
-                                        <md-select v-model="account.user.skinColor" name="color" id="color" md-dense>
-                                            <md-option value="PEACH">Pêche</md-option>
-                                            <md-option value="COFFEE">Café</md-option>
-                                            <md-option value="CHOCOLATE">Chocolat</md-option>
-                                        </md-select>
-                                    </md-field>
-                                </div>
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="skin">Couleur de peau</label>
+                                                <md-select v-model="account.user.skinColor" name="skin" id="skin" md-dense>
+                                                    <md-option value="PEACH">Pêche</md-option>
+                                                    <md-option value="COFFEE">Café</md-option>
+                                                    <md-option value="CHOCOLATE">Chocolat</md-option>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
 
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-field>
-                                        <label for="color">Couleur des cheveux</label>
-                                        <md-select v-model="account.user.hairColor" name="color" id="color" md-dense>
-                                            <md-option value="BLOND">Blond</md-option>
-                                            <md-option value="BROWN">Brun</md-option>
-                                        </md-select>
-                                    </md-field>
-                                </div>
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="color">Couleur des cheveux</label>
+                                                <md-select v-model="account.user.hairColor" name="color" id="color" md-dense>
+                                                    <md-option value="BLOND">Blond</md-option>
+                                                    <md-option value="BROWN">Brun</md-option>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
 
-                            </div>
+                                    </div>
 
-                            <!-- <div class="md-layout md-gutter">
+                                    <div class="md-layout md-gutter md-alignment-center-center">
 
-                                <div class="md-layout-item md-small-size-100">
-                                    <md-button class="md-icon-button centered" @click="updateAvatar(true)">
-                                        <md-icon class="md-size-2x">arrow_left</md-icon>
-                                    </md-button>
+                                        <md-button>
+                                            <router-link to="/">
+                                                Retour
+                                            </router-link>
+                                        </md-button>
 
-                                    <md-button class="md-icon-button centered" @click="updateAvatar(false)">
-                                        <md-icon class="md-size-2x">arrow_right</md-icon>
-                                    </md-button>
-                                </div>
+                                    </div>
+                                </md-card-content>
 
-                            </div> -->
+                            </md-card>
 
-                            <div class="md-layout md-gutter md-alignment-center-center">
+                        </form>
 
-                                <md-button>
-                                    <router-link to="/">
-                                        Retour
-                                    </router-link>
-                                </md-button>
+                    </div>
 
-                            </div>
-                        </md-card-content>
+                </div>
 
-                    </md-card>
+            </md-tab>
 
-                </form>
+            <md-tab id="mloa-info" md-label="Informations MLOA">
 
-            </div>
+                <div class="form-container">
 
-        </div>
+                    <div class="md-layout-item">
+
+                        <form id="mloa-form" class="md-layout md-alignment-center-center" @submit.prevent="handleSubmit">
+
+                            <md-card class="md-layout-item md-gutter md-size-50 md-small-size-100">
+
+                                <md-card-header>
+                                    <div class="md-title">Informations MLOA</div>
+                                </md-card-header>
+
+                                <md-card-content v-if="account.user.info">
+
+                                    <md-content class="md-layout md-gutter md-subhead md-alignment-center-center">
+                                        Si tu le souhaites, tu peux stocker ici les informations de ton conseiller à la MLOA.
+                                    </md-content>
+
+                                    <div class="md-layout md-gutter">
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="advisor-firstname">Prénom</label>
+                                                <md-input name="advisor-firstname" id="advisor-firstname" v-model="account.user.info.advisorFirstName"></md-input>
+                                            </md-field>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="md-layout md-gutter">
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="advisor-lastname">Nom</label>
+                                                <md-input name="advisor-lastname" id="advisor-lastname" v-model="account.user.info.advisorLastName"></md-input>
+                                            </md-field>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="advisor-email">Adresse e-mail</label>
+                                                <md-input name="advisor-email" id="advisor-email" v-model="account.user.info.advisorEmail"></md-input>
+                                            </md-field>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
+                                                <label for="advisor-phone">Numéro de téléphone</label>
+                                                <md-input name="advisor-phone" id="advisor-phone" v-model="account.user.info.advisorPhone"></md-input>
+                                            </md-field>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="md-layout md-gutter md-alignment-center-center">
+
+                                        <md-button>
+                                            <router-link to="/">
+                                                Retour
+                                            </router-link>
+                                        </md-button>
+
+                                    </div>
+                                </md-card-content>
+
+                            </md-card>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </md-tab>
+
+        </md-tabs>
 
         <!-- Validate creation button -->
         <div class="md-layout md-alignment-bottom-right fixed-fab">
@@ -330,5 +388,9 @@
 
     div > form {
         margin: 24px;
+    }
+
+    .md-subhead {
+        margin-bottom: 24px;
     }
 </style>

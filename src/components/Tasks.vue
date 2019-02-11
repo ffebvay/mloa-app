@@ -1,199 +1,213 @@
 <template>
     <div class="tasks-list">
+        <md-tabs md-alignment="fixed" class="md-transparent" md-dynamic-height>
+            <md-tab id="tab-todo" md-label="Aujourd'hui">
 
-        <div class="md-layout">
+                <!--<div class="md-layout">
 
-            <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <span class="md-headline md-layout md-alignment-center-center">Aujourd'hui</span>
-            </div>
+                    <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <span class="md-headline md-layout md-alignment-center-center">Aujourd'hui</span>
+                    </div>
 
-            <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <hr />
-            </div>
+                    <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <hr />
+                    </div>
 
-        </div>
+                </div>-->
 
-        <div id="tasks-container" class="md-layout ">
+                <div id="tasks-container" class="md-layout ">
 
-            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
+                    <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
 
-            <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
+                    <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
 
-                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
+                        <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
 
-                    <md-card v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary white-bg">
-                        <md-ripple>
-                            <md-card-header>
-                                <md-card-header-text>
-                                    <div class="md-title">{{ task.text }}</div>
-                                    <div class="md-subhead">
-                                        <div v-if="task.difficulty === 1">
-                                            Difficulté: FACILE
+                            <md-card v-if="!task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary white-bg">
+                                <md-ripple>
+                                    <md-card-header>
+                                        <md-card-header-text>
+                                            <div class="md-title">{{ task.text }}</div>
+                                            <div class="md-subhead">
+                                                <div v-if="task.difficulty === 1">
+                                                    Difficulté: FACILE
+                                                </div>
+                                                <div v-else-if="task.difficulty === 1.5">
+                                                    Difficulté: MOYEN
+                                                </div>
+                                                <div v-else>
+                                                    Difficulté: EXTRÊME
+                                                </div>
+                                            </div>
+                                        </md-card-header-text>
+
+                                        <md-menu md-size="big" md-direction="bottom-end">
+                                            <md-button class="md-icon-button" md-menu-trigger>
+                                                <md-icon>more_vert</md-icon>
+                                            </md-button>
+
+                                            <md-menu-content>
+                                                <md-menu-item @click="updateTask(task)">
+                                                    <span>Modifier</span>
+                                                    <md-icon>create</md-icon>
+                                                </md-menu-item>
+                                                <md-menu-item @click="deleteTask(task._id)">
+                                                    <span>Supprimer</span>
+                                                    <md-icon>clear</md-icon>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </md-card-header>
+
+                                    <md-card-content>
+                                        <div class="md-body-1" v-if="task.description">
+                                            {{ task.description }}
                                         </div>
-                                        <div v-else-if="task.difficulty === 1.5">
-                                            Difficulté: MOYEN
+
+                                        <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
+                                            <md-list>
+                                                <md-subheader>Liste de vérification</md-subheader>
+
+                                                <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
+                                                    <!-- TODO: Add onChange event when checkbox item is checked -->
+                                                    <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
+                                                    <span class="md-list-item-text">{{item.text}}</span>
+                                                </md-list-item>
+                                            </md-list>
                                         </div>
-                                        <div v-else>
-                                            Difficulté: EXTRÊME
+
+                                        <!-- Due date -->
+                                        <div v-if="task.dueDate" class="due-date-text">
+                                            <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
+                                            Échéance : {{ task.dueDate | moment("from") }}
                                         </div>
-                                    </div>
-                                </md-card-header-text>
+                                    </md-card-content>
 
-                                <md-menu md-size="big" md-direction="bottom-end">
-                                    <md-button class="md-icon-button" md-menu-trigger>
-                                        <md-icon>more_vert</md-icon>
-                                    </md-button>
+                                    <md-card-actions class="md-layout md-alignment-center-center">
+                                        <div class="check-container">
+                                            <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
+                                        </div>
+                                    </md-card-actions>
+                                </md-ripple>
+                            </md-card>
+                        </div>
 
-                                    <md-menu-content>
-                                        <md-menu-item @click="updateTask(task)">
-                                            <span>Modifier</span>
-                                            <md-icon>create</md-icon>
-                                        </md-menu-item>
-                                        <md-menu-item @click="deleteTask(task._id)">
-                                            <span>Supprimer</span>
-                                            <md-icon>clear</md-icon>
-                                        </md-menu-item>
-                                    </md-menu-content>
-                                </md-menu>
-                            </md-card-header>
+                    </div>
 
-                            <md-card-content>
-                                <div class="md-body-1" v-if="task.description">
-                                    {{ task.description }}
-                                </div>
+                    <div v-if="!tasks.items" class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <span class="md-subheading">Aucune tâche à effectuer aujourd'hui, bravo !</span>
+                    </div>
 
-                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
-                                    <md-list>
-                                        <md-subheader>Liste de vérification</md-subheader>
-
-                                        <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
-                                            <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
-                                            <span class="md-list-item-text">{{item.text}}</span>
-                                        </md-list-item>
-                                    </md-list>
-                                </div>
-
-                                <!-- Due date -->
-                                <div v-if="task.dueDate" class="due-date-text">
-                                    <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
-                                    Échéance : {{ task.dueDate | moment("from") }}
-                                </div>
-                            </md-card-content>
-
-                            <md-card-actions class="md-layout md-alignment-center-center">
-                                <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
-                                </div>
-                            </md-card-actions>
-                        </md-ripple>
-                    </md-card>
                 </div>
 
-            </div>
+            </md-tab>
 
-            <div v-if="!tasks.items" class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <span class="md-subheading">Aucune tâche à effectuer aujourd'hui, bravo !</span>
-            </div>
+            <md-tab id="tab-done" md-label="Déjà accomplies">
 
-        </div>
+                <!--<div class="md-layout ">
 
-        <div class="md-layout ">
+                    <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <span class="md-headline md-layout md-alignment-center-center">Déjà accomplies</span>
+                    </div>
 
-            <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <span class="md-headline md-layout md-alignment-center-center">Déjà accomplies</span>
-            </div>
+                    <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <hr />
+                    </div>
 
-            <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <hr />
-            </div>
+                </div>-->
 
-        </div>
+                <div id="tasks-done-container" class="md-layout ">
 
-        <div id="tasks-done-container" class="md-layout ">
+                    <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
 
-            <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
+                    <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
 
-            <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
+                        <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
 
-                <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
+                            <md-card v-if="task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary" :class="{'gray-card': task.completed}">
+                                <md-ripple>
+                                    <md-card-header>
+                                        <md-card-header-text>
+                                            <div class="md-title">{{ task.text }}</div>
+                                            <div class="md-subhead">
+                                                <div v-if="task.difficulty === 1">
+                                                    Difficulté: FACILE
+                                                </div>
+                                                <div v-else-if="task.difficulty === 1.5">
+                                                    Difficulté: MOYEN
+                                                </div>
+                                                <div v-else>
+                                                    Difficulté: EXTRÊME
+                                                </div>
+                                            </div>
+                                        </md-card-header-text>
 
-                    <md-card v-if="task.completed" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary" :class="{'gray-card': task.completed}">
-                        <md-ripple>
-                            <md-card-header>
-                                <md-card-header-text>
-                                    <div class="md-title">{{ task.text }}</div>
-                                    <div class="md-subhead">
-                                        <div v-if="task.difficulty === 1">
-                                            Difficulté: FACILE
+                                        <md-menu md-size="big" md-direction="bottom-end">
+                                            <md-button class="md-icon-button" md-menu-trigger>
+                                                <md-icon>more_vert</md-icon>
+                                            </md-button>
+
+                                            <md-menu-content>
+                                                <md-menu-item @click="updateTask(task)">
+                                                    <span>Modifier</span>
+                                                    <md-icon>create</md-icon>
+                                                </md-menu-item>
+                                                <md-menu-item @click="deleteTask(task._id)">
+                                                    <span>Supprimer</span>
+                                                    <md-icon>clear</md-icon>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </md-card-header>
+
+                                    <md-card-content>
+                                        <div class="md-body-1" v-if="task.description">
+                                            {{ task.description }}
                                         </div>
-                                        <div v-else-if="task.difficulty === 1.5">
-                                            Difficulté: MOYEN
+
+                                        <div v-if="task.checklist && task.checklist.length > 0" class="check-control gray-card">
+                                            <md-list>
+                                                <md-subheader>Liste de vérification</md-subheader>
+
+                                                <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
+                                                    <!-- TODO: Add onChange event when checkbox item is checked -->
+                                                    <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
+                                                    <span class="md-list-item-text">{{item.text}}</span>
+                                                </md-list-item>
+                                            </md-list>
                                         </div>
-                                        <div v-else>
-                                            Difficulté: EXTRÊME
+
+                                        <!-- Due date -->
+                                        <div v-if="task.dueDate" class="due-date-text">
+                                            <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
+                                            Échéance : {{ task.dueDate | moment("from") }}
                                         </div>
-                                    </div>
-                                </md-card-header-text>
+                                    </md-card-content>
 
-                                <md-menu md-size="big" md-direction="bottom-end">
-                                    <md-button class="md-icon-button" md-menu-trigger>
-                                        <md-icon>more_vert</md-icon>
-                                    </md-button>
+                                    <md-card-actions class="md-layout md-alignment-center-center">
+                                        <div class="check-container">
+                                            <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
+                                        </div>
+                                    </md-card-actions>
+                                </md-ripple>
+                            </md-card>
+                        </div>
 
-                                    <md-menu-content>
-                                        <md-menu-item @click="updateTask(task)">
-                                            <span>Modifier</span>
-                                            <md-icon>create</md-icon>
-                                        </md-menu-item>
-                                        <md-menu-item @click="deleteTask(task._id)">
-                                            <span>Supprimer</span>
-                                            <md-icon>clear</md-icon>
-                                        </md-menu-item>
-                                    </md-menu-content>
-                                </md-menu>
-                            </md-card-header>
+                    </div>
 
-                            <md-card-content>
-                                <div class="md-body-1" v-if="task.description">
-                                    {{ task.description }}
-                                </div>
+                    <div v-else class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <span class="md-subheading">Il vous reste de grandes choses à accomplir !</span>
+                    </div>
 
-                                <div v-if="task.checklist && task.checklist.length > 0" class="check-control gray-card">
-                                    <md-list>
-                                        <md-subheader>Liste de vérification</md-subheader>
-
-                                        <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
-                                            <!-- TODO: Add onChange event when checkbox item is checked -->
-                                            <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
-                                            <span class="md-list-item-text">{{item.text}}</span>
-                                        </md-list-item>
-                                    </md-list>
-                                </div>
-
-                                <!-- Due date -->
-                                <div v-if="task.dueDate" class="due-date-text">
-                                    <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
-                                    Échéance : {{ task.dueDate | moment("from") }}
-                                </div>
-                            </md-card-content>
-
-                            <md-card-actions class="md-layout md-alignment-center-center">
-                                <div class="check-container">
-                                    <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
-                                </div>
-                            </md-card-actions>
-                        </md-ripple>
-                    </md-card>
                 </div>
 
-            </div>
+            </md-tab>
 
-            <div v-else class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                <span class="md-subheading">Il vous reste de grandes choses à accomplir !</span>
-            </div>
 
-        </div>
+
+        </md-tabs>
+
+
 
         <EditTask :visible="showDialog" :task-id="currentTaskId" :task-to-update="currentTask" @close="onClose" />
 
@@ -398,8 +412,8 @@
     }
 
     .tasks-list {
-        margin-bottom: 75px;
-        padding-top: 25px;
+        margin-bottom: 80px;
+        /*padding-top: 25px;*/
         height: 100vh;
         width: 100%;
         overflow-x: hidden;
@@ -419,13 +433,13 @@
     }
 
     #tasks-container {
-        margin: 24px;
+        /*margin: 24px;*/
         padding: 5px;
         /*overflow-x: hidden;*/
     }
 
     #tasks-done-container {
-        margin: 24px;
+        /*margin: 24px;*/
         padding: 5px;
         /*overflow-x: hidden;*/
     }

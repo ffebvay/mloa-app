@@ -12,10 +12,6 @@
             </div>
 
             <div class="md-toolbar-section-end">
-                <md-button class="md-icon-button">
-                    <md-icon>refresh</md-icon>
-                </md-button>
-
                 <router-link to="/login">
                     <md-button class="md-icon-button">
                         <md-icon>power_settings_new</md-icon>

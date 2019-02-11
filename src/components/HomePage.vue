@@ -12,7 +12,7 @@
             </div>
 
             <div class="md-toolbar-section-end">
-                <md-button class="md-icon-button">
+                <md-button class="md-icon-button" @click.native="refreshUI">
                     <md-icon>refresh</md-icon>
                 </md-button>
 
@@ -63,7 +63,7 @@
 
         <div id="tuto-step-5" class="v-step-5"></div>
         <!-- Main content (list of tasks) -->
-        <div class="md-layout md-gutter">
+        <div id="tasks"><!--class="md-layout md-gutter"-->
 
            <Tasks />
 
@@ -288,6 +288,9 @@
             ...mapActions('account', {
                 getLoggedUser: 'getCurrent'
             }),
+            ...mapActions('tasks', {
+                refreshTasks: 'getAllByUser'
+            }),
             experienceToNextLevel: function () {
                 return experienceToNextLevel(this.account.user.jobLevel)
             },
@@ -312,6 +315,16 @@
             },
             onJobDialogClose: function() {
                 this.showJobSelect = false
+            },
+            refreshUI: function() {
+                // Only current way I found to update User stats once a task is completed
+                setTimeout(() => {
+                    this.getLoggedUser(this.account.user._id)
+                }, 500)
+
+                setTimeout(() => {
+                    this.refreshTasks(this.account.user._id)
+                }, 500)
             }/*,
             getImage(path) {
                 return path ? require('@/assets/' + path) : ''
@@ -357,7 +370,7 @@
 
     .player-details {
         display: block;
-        margin: 20px;
+        /*margin: 20px;*/
         text-align: left;
         background-color: #35515a;
     }
