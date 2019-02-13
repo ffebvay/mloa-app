@@ -35,6 +35,14 @@
 
                                 <md-card-header>
                                     <div class="md-title">Mon profil</div>
+
+                                    <!--<div id="stage-bar">
+                                        <div id="stage-progress">
+                                            <img alt="progress" src="@/assets/bonus/COIN.02.png" />
+                                            <div id="stage-text">Niveau 5</div>
+                                        </div>
+                                    </div>-->
+
                                 </md-card-header>
 
                                 <md-card-content>
@@ -43,6 +51,10 @@
                                         <div class="md-layout-item md-small-size-100 avatar">
                                             <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
                                             <img id="avatar" alt="player-avatar"/>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100" v-show="(account.user.canChangeJob &&account.user.canChangeJob === true)">
+                                            <md-button class="md-raised md-accent md-dense change-job">Changer de métier</md-button>
                                         </div>
 
                                     </div>
@@ -273,17 +285,18 @@
             },
             clothesPath: function() {
                 return this.account.user.genre + '.CLOTHES01'
+            },
+            computedStage: function() {
+                return (this.account.user.stage / 4) * 100
             }
         },
         created () {
-            console.log(this.account.user)
-
             // Display player's avatar by merging several sprites
             this.pushSprites()
 
             if (this.avatarList.length != 0) {
                 mergeImages(this.avatarList)
-                    .then(b64 => document.querySelector('img').src = b64)
+                    .then(b64 => document.querySelector('#avatar').src = b64)
             }
         },
         beforeUpdate() {
@@ -292,10 +305,8 @@
 
             if (this.avatarList.length != 0) {
                 mergeImages(this.avatarList)
-                    .then(b64 => document.querySelector('img').src = b64)
+                    .then(b64 => document.querySelector('#avatar').src = b64)
             }
-
-            console.log(this.account.user)
         },
         methods: {
             ...mapActions('account', ['updateUser']),
@@ -324,8 +335,6 @@
                 this.$validator.validate().then(valid => {
                     if (valid) {
                         let newUser = this.updateProfile(this.account.user)
-
-                        console.log('User Profile edited : ', newUser)
 
                         this.updateUser(newUser)
                     }
@@ -363,13 +372,9 @@
         z-index: 9999;
     }
 
-    .centered {
-        /*margin: 0 auto;*/
-    }
-
     .avatar {
         background: lightslategray;
-        margin: 48px;
+        margin-bottom: 20px;
     }
 
     .avatar > img{
@@ -382,6 +387,36 @@
         image-rendering: pixelated;*/
         position: relative;
     }
+
+    .change-job {
+        margin-bottom: 30px;
+    }
+
+    /*#stage-bar {
+        width: 100%;
+        margin-top: 36px;
+        height: 10px;
+        text-align: end;
+        background: goldenrod;
+    }
+
+    #stage-progress {
+        width: 25%;
+        height: 10px;
+        background: gold;
+    }
+
+    #stage-progress > img {
+        margin-top: 14px;
+        transform: translate(12px, -48px);
+        width: 30%;
+        height: auto;
+    }
+
+    #stage-text {
+        text-align: center;
+        transform: translate(30px);
+    }*/
 
     div > form {
         margin: 24px;

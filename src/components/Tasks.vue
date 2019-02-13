@@ -102,12 +102,12 @@
 
             </md-tab>
 
-            <md-tab id="tab-done" md-label="Déjà accomplies">
+            <md-tab id="tab-due" md-label="Planifiées">
 
-                <!--<div class="md-layout ">
+                <!--<div class="md-layout">
 
                     <div class="md-layout-item md-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
-                        <span class="md-headline md-layout md-alignment-center-center">Déjà accomplies</span>
+                        <span class="md-headline md-layout md-alignment-center-center">Aujourd'hui</span>
                     </div>
 
                     <div class="md-layout-item md-size-75 md-medium-size-33 md-small-size-50 md-xsmall-size-100">
@@ -115,6 +115,95 @@
                     </div>
 
                 </div>-->
+
+                <div id="due-container" class="md-layout ">
+
+                    <span v-if="tasks.error" class="md-layout md-alignment-center-center text-danger">ERREUR: {{ tasks.error }}</span>
+
+                    <div class="md-layout-item md-alignment-center-center light-bg" v-if="tasks.items">
+
+                        <div class="task-container md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100" v-for="task in tasks.items" :key="task._id">
+
+                            <md-card v-if="(!task.completed && task.dueDate !== null)" class="md-layout-item md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100 md-primary white-bg">
+                                <md-ripple>
+                                    <md-card-header>
+                                        <md-card-header-text>
+                                            <div class="md-title">{{ task.text }}</div>
+                                            <div class="md-subhead">
+                                                <div v-if="task.difficulty === 1">
+                                                    Difficulté: FACILE
+                                                </div>
+                                                <div v-else-if="task.difficulty === 1.5">
+                                                    Difficulté: MOYEN
+                                                </div>
+                                                <div v-else>
+                                                    Difficulté: EXTRÊME
+                                                </div>
+                                            </div>
+                                        </md-card-header-text>
+
+                                        <md-menu md-size="big" md-direction="bottom-end">
+                                            <md-button class="md-icon-button" md-menu-trigger>
+                                                <md-icon>more_vert</md-icon>
+                                            </md-button>
+
+                                            <md-menu-content>
+                                                <md-menu-item @click="updateTask(task)">
+                                                    <span>Modifier</span>
+                                                    <md-icon>create</md-icon>
+                                                </md-menu-item>
+                                                <md-menu-item @click="deleteTask(task._id)">
+                                                    <span>Supprimer</span>
+                                                    <md-icon>clear</md-icon>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu>
+                                    </md-card-header>
+
+                                    <md-card-content>
+                                        <div class="md-body-1" v-if="task.description">
+                                            {{ task.description }}
+                                        </div>
+
+                                        <div v-if="task.checklist && task.checklist.length > 0" class="check-control">
+                                            <md-list>
+                                                <md-subheader>Liste de vérification</md-subheader>
+
+                                                <md-list-item v-for="(item, $index) in task.checklist" :key="item._id">
+                                                    <!-- TODO: Add onChange event when checkbox item is checked -->
+                                                    <md-checkbox v-model="item.completed" v-on:change="$emit('change', updateChecklist(task))"></md-checkbox>
+                                                    <span class="md-list-item-text">{{item.text}}</span>
+                                                </md-list-item>
+                                            </md-list>
+                                        </div>
+
+                                        <!-- Due date -->
+                                        <div v-if="task.dueDate" class="due-date-text">
+                                            <md-icon style="color:red; font-size:16px !important;">calendar_today</md-icon>
+                                            Échéance : {{ task.dueDate | moment("from") }}
+                                        </div>
+                                    </md-card-content>
+
+                                    <md-card-actions class="md-layout md-alignment-center-center">
+                                        <div class="check-container">
+                                            <md-checkbox v-model="task.completed" v-on:change="$emit('change', scoreTask(task))"></md-checkbox>
+                                        </div>
+                                    </md-card-actions>
+                                </md-ripple>
+                            </md-card>
+                        </div>
+
+                    </div>
+
+                    <div v-if="!tasks.items" class="md-layout md-alignment-center-center md-medium-size-33 md-small-size-50 md-xsmall-size-100">
+                        <span class="md-subheading">Aucune tâche à effectuer aujourd'hui, bravo !</span>
+                    </div>
+
+                </div>
+
+            </md-tab>
+
+            <md-tab id="tab-done" md-label="Déjà accomplies">
 
                 <div id="tasks-done-container" class="md-layout ">
 
@@ -288,8 +377,6 @@
             scoreTask: function(task) {
                 let newStats = this.account.user
 
-                console.log('About to be updated : ', newStats)
-
                 // XP Gain/ Checklist bonuses
                 let checklistXP = 0
                 let gainXP = 0
@@ -307,13 +394,18 @@
                         })
                     }
 
-                    console.log(checklistXP)
-
                     // calculate new earned experience
                     newStats.currentExp += ((task.grantExp * task.difficulty) + checklistXP)
 
+                    // add stage experience (bonus due to reaching stage 1, 2, 3, 4)
+                    // NewExp = TaskExp {5 * difficulty} + (TaskExp * Stage) { 5 * difficulty * [1, 2, 3, 4] } + constants (checklists)
+                    // <=> NewExp += (TaskExp * Stage)
+                    let stageXP = (task.grantExp * task.difficulty) * newStats.stage
+                    newStats.currentExp += stageXP
+
                     // store total of XP gained
                     gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+                    gainXP += stageXP
 
                     // increment completed tasks
                     newStats.completedTasks++
@@ -342,8 +434,13 @@
                         newStats.currentExp = 0
                         : newStats.currentExp -= ((task.grantExp * task.difficulty) + checklistXP)
 
+                    // remove stage experience (malus due to reaching stage 1, 2, 3, 4)
+                    let stageXP = (task.grantExp * task.difficulty) * newStats.stage
+                    newStats.currentExp -= stageXP
+
                     // store total of XP lost
                     gainXP += ((task.grantExp * task.difficulty) + checklistXP)
+                    gainXP += stageXP
 
                     // update completed tasks counter always greater than 0 !
                     newStats.completedTasks - 1 < 0 ? newStats.completedTasks = 0 : newStats.completedTasks--
@@ -357,18 +454,16 @@
                     snack = 'Vous avez perdu de l\'expérience : '
                 }
 
-                console.log(`Player's job new experience : ${newStats.currentExp} XP`)
-
                 // Level up if totalXP of user is superior to the amount of XP to level up
                 if (newStats.currentExp >= experienceToNextLevel(newStats.jobLevel)) {
                     newStats.jobLevel++
                 }
 
                 // Stage up if new Job Level reaches 5, 10 or 15 => IT SHOULD NOT BE LESS THAN OR MORE THAN 4
-                if (newStats.stage === 1 && (newStats.jobLevel >= 5 && newStats < 10)) {
+                if (newStats.stage === 1 && (newStats.jobLevel >= 5 && newStats.jobLevel < 10)) {
                     newStats.stage++ // Stage 2
                 }
-                else if (newStats.stage === 2 && (newStats.jobLevel >= 10 && newStats < 15)) {
+                else if (newStats.stage === 2 && (newStats.jobLevel >= 10 && newStats.jobLevel < 15)) {
                     newStats.stage++ // Stage 3
                 }
                 else if (newStats.stage === 3 && newStats.jobLevel >= 15) {
@@ -378,18 +473,12 @@
                 // set snack message
                 snack += `${gainXP} XP`
 
-                console.log('Snack : ', snack)
-                console.log('New stats : ', newStats)
-                console.log('Completed task : ', task)
-
                 // group parameters into one object
                 let params = {
                     task: task,
                     newStats: newStats,
                     snack: snack
                 }
-
-                console.log(params)
 
                 // call action form "tasks" store
                 this.markDone(params)

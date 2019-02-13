@@ -56,6 +56,16 @@
                                     </md-select>
                                 </md-field>
 
+                                <div class="md-layout date-group">
+
+                                    <label class="md-title">Échéance</label>
+
+                                    <md-datepicker v-model="task.dueDate">
+                                        <label>Sélectionner une date...</label>
+                                    </md-datepicker>
+
+                                </div>
+
                                 <div class="md-layout checklist-group">
 
                                     <label class="md-title">Liste de vérification</label>
@@ -72,17 +82,8 @@
                                         <label>Ajouter un élément...</label>
 
                                         <md-input type="text" v-model="newChecklistItem" @keydown.enter="addChecklistItem($event)" :placeholder="newChecklistItem"></md-input>
+                                        <md-tooltip md-direction="top">Appuie sur "Entrée" pour ajouter une sous-tâche</md-tooltip>
                                     </md-field>
-
-                                </div>
-
-                                <div class="md-layout date-group">
-
-                                    <label class="md-title">Échéance</label>
-
-                                    <md-datepicker v-model="task.dueDate">
-                                        <label>Sélectionner une date...</label>
-                                    </md-datepicker>
 
                                 </div>
 
@@ -203,6 +204,11 @@
 
     .md-card {
         margin-bottom: 75px;
+    }
+
+    .md-datepicker-dialog {
+        top: 50%;
+        left: 33%;
     }
 
     .form-container {

@@ -252,8 +252,6 @@
             }
         },
         created () {
-            console.log(this.account)
-
             // Display modal dialog on first connection and edit "user.flags.welcomed" value to "true"
             if (this.account.user.flags.welcomed === false) {
                 this.showWelcome = true
@@ -360,7 +358,7 @@
         position: fixed;
         right: 0;
         left: 0;
-        bottom: 40px;
+        bottom: 44px;
         z-index: 9999;
     }
 
