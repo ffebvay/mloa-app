@@ -459,6 +459,10 @@
                     newStats.jobLevel++
                 }
 
+                if (newStats.jobLevel >= 10 && newStats.flags.canChangeJob === false) {
+                    newStats.flags.canChangeJob = true
+                }
+
                 // Stage up if new Job Level reaches 5, 10 or 15 => IT SHOULD NOT BE LESS THAN OR MORE THAN 4
                 if (newStats.stage === 1 && (newStats.jobLevel >= 5 && newStats.jobLevel < 10)) {
                     newStats.stage++ // Stage 2

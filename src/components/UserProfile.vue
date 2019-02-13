@@ -46,15 +46,15 @@
                                 </md-card-header>
 
                                 <md-card-content>
-                                    <div class="md-layout md-gutter">
+                                    <div>
 
                                         <div class="md-layout-item md-small-size-100 avatar">
                                             <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
                                             <img id="avatar" alt="player-avatar"/>
                                         </div>
 
-                                        <div class="md-layout-item md-small-size-100" v-show="(account.user.canChangeJob &&account.user.canChangeJob === true)">
-                                            <md-button class="md-raised md-accent md-dense change-job">Changer de métier</md-button>
+                                        <div v-show="(account.user.flags.canChangeJob || account.user.flags.canChangeJob === true)">
+                                            <md-button class="md-raised md-accent md-dense change-job" @click.native="showJobChange = true">Changer de métier</md-button>
                                         </div>
 
                                     </div>
@@ -203,7 +203,7 @@
         </md-tabs>
 
         <!-- Validate creation button -->
-        <div class="md-layout md-alignment-bottom-right fixed-fab">
+        <div class="md-layout md-alignment-bottom-right fixed-fab" v-if="!showJobChange">
 
             <md-button class="md-fab" form="profile-form" type="submit">
                 <md-icon>save</md-icon>
@@ -211,17 +211,22 @@
 
         </div>
 
+        <ChangeJobDialog :visible="showJobChange" @close="onChangeJobDialogClose" />
+
     </div>
 </template>
 
 <script>
     import { mapState, mapActions } from 'vuex'
     import mergeImages from 'merge-images'
+    import ChangeJobDialog from "./ChangeJobDialog";
 
     export default {
         name: "UserProfile",
+        components: {ChangeJobDialog},
         data () {
             return {
+                showJobChange: false,
                 avatarList: []
             }
         },
@@ -339,6 +344,9 @@
                         this.updateUser(newUser)
                     }
                 })
+            },
+            onChangeJobDialogClose: function() {
+                this.showJobChange = false
             }
         }
     }
@@ -377,7 +385,7 @@
         margin-bottom: 20px;
     }
 
-    .avatar > img{
+    .avatar > img {
         display: block;
         height: 300px;
         margin-left: auto;
