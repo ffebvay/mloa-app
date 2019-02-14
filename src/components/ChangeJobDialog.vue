@@ -205,8 +205,6 @@
                         return el.job === playerJob
                     })
 
-                    console.log('Found old job in history at index : ', found)
-
                     if (found === -1) {
                         newUser.history.push(savedState)
                     }
@@ -235,8 +233,6 @@
                     let found = newUser.history.findIndex(function(el) {
                         return el.job === playerJob
                     })
-
-                    console.log('Found old job in history at index : ', found)
 
                     if (found !== -1) {
                         newUser.history[found].jobLevel = newUser.jobLevel

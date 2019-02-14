@@ -137,7 +137,7 @@
                             <md-card class="md-layout-item md-gutter md-size-50 md-small-size-100">
 
                                 <md-card-header>
-                                    <div class="md-title">Informations MLOA</div>
+                                    <div class="md-title">Informations CIP</div>
                                 </md-card-header>
 
                                 <md-card-content v-if="account.user.info">
