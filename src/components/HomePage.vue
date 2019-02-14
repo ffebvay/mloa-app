@@ -146,7 +146,7 @@
                     },
                     {
                         target: '.v-step-6',
-                        content: 'Enfin, ce menu te permettra de naviguer entre les différentes pages de l\'application pour te renseigner sur ta Mission Locale préférée !',
+                        content: 'Enfin, le menu tout en bas te permettra de naviguer entre les différentes pages de l\'application pour te renseigner sur ta Mission Locale préférée !',
                         params: {
                             placement: 'top'
                         }
@@ -245,10 +245,87 @@
                 return this.account.user.genre + '.SKIN.' + this.account.user.skinColor
             },
             hairColorPath: function() {
-                return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                let hairPath = ''
+
+                // Add logic for no hair
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'restauration':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'batiment':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'transport':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    default:
+                        hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        break
+                }
+
+                //hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                return hairPath
             },
             clothesPath: function() {
                 return this.account.user.genre + '.CLOTHES01'
+            },
+            jobPath: function() {
+                let jobPath = ''
+
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        if (this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'restauration':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'batiment':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'transport':
+                        if (this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    default:
+                        jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        break
+                }
+
+                return jobPath
             }
         },
         created () {
@@ -301,9 +378,14 @@
                 this.avatarList.push(require('@/assets/' + this.hairColorPath + '.png'))
                 this.avatarList.push(require('@/assets/' + this.clothesPath + '.png'))
 
+                // Add job costume sprite + check if costume contains a hat => no hair
                 if (this.account.user.job !== 'sans') {
-                    this.avatarList.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.png'))
+                    this.avatarList.push(require('@/assets/' + this.jobPath + '.png'))
                 }
+
+                /*if (this.account.user.job !== 'sans') {
+                    this.avatarList.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.png'))
+                }*/
             },
             onWelcomeDialogClose: function() {
                 this.showWelcome = false
@@ -364,6 +446,10 @@
 
     .md-layout-item {
         padding: 12px;
+    }
+
+    .md-progress-bar {
+        height: 8px;
     }
 
     .player-details {

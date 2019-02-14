@@ -107,13 +107,13 @@
         </div>
 
         <!-- Validate creation button -->
-        <div class="md-layout md-alignment-bottom-right fixed-fab">
+        <!--<div class="md-layout md-alignment-bottom-right fixed-fab">
 
             <md-button class="md-fab" form="create-form" type="submit" :disabled="status.creating">
                 <md-icon>check</md-icon>
             </md-button>
 
-        </div>
+        </div>-->
 
         <!-- Navigation bar -->
         <div class="phone-viewport">

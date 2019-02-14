@@ -28,10 +28,21 @@
                 </md-field>
 
                 <md-field>
+                    <label for="haircut">Coupe de cheveux</label>
+                    <md-select v-model="account.user.haircut" name="haircut" id="haircut" md-dense>
+                        <md-option value="HAIR01">Courts</md-option>
+                        <md-option value="HAIR02">Mi-longs</md-option>
+                        <md-option value="HAIR03">Bouclés</md-option>
+                    </md-select>
+                </md-field>
+
+                <md-field>
                     <label for="hair">Couleur des cheveux</label>
                     <md-select v-model="account.user.hairColor" name="hair" id="hair" md-dense>
                         <md-option value="BROWN">Brun</md-option>
                         <md-option value="BLOND">Blond</md-option>
+                        <md-option value="BLACK">Ebène</md-option>
+                        <md-option value="RED">Roux</md-option>
                     </md-select>
                 </md-field>
 

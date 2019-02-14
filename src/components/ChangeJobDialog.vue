@@ -5,10 +5,11 @@
 
             <div class="md-layout md-small-size-100 avatar-container">
                 <!-- TODO: Update Player avatar logic regarding internal assets & user's choices -->
-                <img id="stage-01" class="avatar" alt="player-avatar"/>
+                <img id="stages" class="avatar" alt="jobs-avatar"/>
+                <!-- <img id="stage-01" class="avatar" alt="player-avatar"/>
                 <img id="stage-02" class="avatar" alt="player-avatar"/>
                 <img id="stage-03" class="avatar" alt="player-avatar"/>
-                <img id="stage-04" class="avatar" alt="player-avatar"/>
+                <img id="stage-04" class="avatar" alt="player-avatar"/> -->
                 <md-tooltip position="bottom">Paliers de progression</md-tooltip>
             </div>
 
@@ -60,10 +61,11 @@
                 user: {},
                 currentJob: '',
                 submitted: false,
-                stageList1: [],
+                stagesList: []
+                /*stageList1: [],
                 stageList2: [],
                 stageList3: [],
-                stageList4: []
+                stageList4: []*/
             }
         },
         props: ['visible'],
@@ -109,24 +111,81 @@
                         return 'COM'
                         break
                 }
+            }/*,
+            userStage: function() {
+                switch(this.account.user.stage) {
+                    case 1:
+                        return '01'
+                        break
+                    case 2:
+                        return '02'
+                        break
+                    case 3:
+                        return '03'
+                        break
+                    case 4:
+                        return '04'
+                        break
+                    default:
+                        return '01'
+                        break
+                }
             },
             skinColorPath: function() {
                 return this.account.user.genre + '.SKIN.' + this.account.user.skinColor
             },
             hairColorPath: function() {
-                return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                let hairPath = ''
+
+                // Add logic for no hair
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'restauration':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'batiment':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'transport':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                        }
+                        break
+                    default:
+                        hairPath = this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                        break
+                }
+
+                //return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                return hairPath
             },
             clothesPath: function() {
                 return this.account.user.genre + '.CLOTHES01'
-            }
+            }*/
         },
         created () {
             this.currentJob = this.account.user.job
         },
         beforeUpdate () {
             // Display Job Costumes by merging several sprites
-            this.pushSprites(this.stageList1)
-            this.pushSprites(this.stageList2)
+            this.pushSprites(this.stagesList)
+            /*this.pushSprites(this.stageList2)
             this.pushSprites(this.stageList3)
             this.pushSprites(this.stageList4)
 
@@ -134,8 +193,30 @@
             if (this.account.user.job !== 'sans') {
                 this.stageList1.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.01.png'))
                 this.stageList2.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.02.png'))
-                this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.png'))
-                this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.png'))
+
+                // Check for 'no hair' exception in each of the 4 particular jobs
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.png'))
+                        this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.NH.png'))
+                        break
+                    case 'restauration':
+                        this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.NH.png'))
+                        this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.NH.png'))
+                        break
+                    case 'transport':
+                        this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.png'))
+                        this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.NH.png'))
+                        break
+                    case 'batiment':
+                        this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.NH.png'))
+                        this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.NH.png'))
+                        break
+                    default:
+                        this.stageList3.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.03.png'))
+                        this.stageList4.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.04.png'))
+                        break
+                }
             }
 
             if (this.stageList1.length !== 0) {
@@ -151,18 +232,16 @@
             if (this.stageList3.length !== 0) {
                 mergeImages(this.stageList3)
                     .then(b64 => document.querySelector('#stage-03').src = b64)
-            }
-
-            if (this.stageList4.length !== 0) {
-                mergeImages(this.stageList4)
-                    .then(b64 => document.querySelector('#stage-04').src = b64)
-            }
+            }*/
+            mergeImages(this.stagesList)
+                .then(b64 => document.querySelector('#stages').src = b64)
         },
         updated () {
-            this.stageList1 = []
+            this.stagesList = []
+            /*this.stageList1 = []
             this.stageList2 = []
             this.stageList3 = []
-            this.stageList4 = []
+            this.stageList4 = []*/
         },
         methods: {
             ...mapActions('account', ['updateUser']),
@@ -170,10 +249,12 @@
                 // reset avatar picture
                 if (array.length !== 0) array = []
 
+                array.push(require('@/assets/default/' + this.account.user.genre + '.' + this.userJob + '.png'))
+
                 // Add base sprites to the internal array
-                array.push(require('@/assets/' + this.skinColorPath + '.png'))
+                /*array.push(require('@/assets/' + this.skinColorPath + '.png'))
                 array.push(require('@/assets/' + this.hairColorPath + '.png'))
-                array.push(require('@/assets/' + this.clothesPath + '.png'))
+                array.push(require('@/assets/' + this.clothesPath + '.png'))*/
             },
             changeJob: function(user) {
                 const playerJob = this.currentJob
@@ -274,8 +355,10 @@
     }
 
     .avatar-container > img {
-        width: 25%;
-        height: 200px;
+        max-width: 100%;
+        max-height: 200px;
+        width: auto;
+        height: auto;
         margin-left: auto;
         margin-right: auto;
     }

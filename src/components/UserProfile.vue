@@ -95,10 +95,23 @@
 
                                         <div class="md-layout-item md-small-size-100">
                                             <md-field>
+                                                <label for="haircut">Coupe de cheveux</label>
+                                                <md-select v-model="account.user.haircut" name="haircut" id="haircut" md-dense>
+                                                    <md-option value="HAIR01">Courts</md-option>
+                                                    <md-option value="HAIR02">Mi-longs</md-option>
+                                                    <md-option value="HAIR03">Bouclés</md-option>
+                                                </md-select>
+                                            </md-field>
+                                        </div>
+
+                                        <div class="md-layout-item md-small-size-100">
+                                            <md-field>
                                                 <label for="color">Couleur des cheveux</label>
                                                 <md-select v-model="account.user.hairColor" name="color" id="color" md-dense>
                                                     <md-option value="BLOND">Blond</md-option>
                                                     <md-option value="BROWN">Brun</md-option>
+                                                    <md-option value="BLACK">Ebène</md-option>
+                                                    <md-option value="RED">Roux</md-option>
                                                 </md-select>
                                             </md-field>
                                         </div>
@@ -106,6 +119,10 @@
                                     </div>
 
                                     <div class="md-layout md-gutter md-alignment-center-center">
+
+                                        <md-button class="md-primary" form="profile-form" type="submit">
+                                            Sauvegarder
+                                        </md-button>
 
                                         <md-button>
                                             <router-link to="/">
@@ -181,6 +198,10 @@
 
                                     <div class="md-layout md-gutter md-alignment-center-center">
 
+                                        <md-button class="md-primary" form="profile-form" type="submit">
+                                            Sauvegarder
+                                        </md-button>
+
                                         <md-button>
                                             <router-link to="/">
                                                 Retour
@@ -203,13 +224,13 @@
         </md-tabs>
 
         <!-- Validate creation button -->
-        <div class="md-layout md-alignment-bottom-right fixed-fab" v-if="!showJobChange">
+        <!-- <div class="md-layout md-alignment-bottom-right fixed-fab" v-if="!showJobChange">
 
             <md-button class="md-fab" form="profile-form" type="submit">
                 <md-icon>save</md-icon>
             </md-button>
 
-        </div>
+        </div> -->
 
         <ChangeJobDialog :visible="showJobChange" @close="onChangeJobDialogClose" />
 
@@ -286,10 +307,87 @@
                 return this.account.user.genre + '.SKIN.' + this.account.user.skinColor
             },
             hairColorPath: function() {
-                return this.account.user.genre + '.HAIR01.' + this.account.user.hairColor
+                let hairPath = ''
+
+                // Add logic for no hair
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'restauration':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'batiment':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    case 'transport':
+                        if (this.account.user.stage === 4) {
+                            hairPath = this.account.user.genre + '.NOHAIR.' + this.account.user.hairColor
+                        } else {
+                            hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        }
+                        break
+                    default:
+                        hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                        break
+                }
+
+                //hairPath = this.account.user.genre + '.' + this.account.user.haircut + '.' + this.account.user.hairColor
+                return hairPath
             },
             clothesPath: function() {
                 return this.account.user.genre + '.CLOTHES01'
+            },
+            jobPath: function() {
+                let jobPath = ''
+
+                switch (this.account.user.job) {
+                    case 'agriculture':
+                        if (this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'restauration':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'batiment':
+                        if (this.account.user.stage === 3 || this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    case 'transport':
+                        if (this.account.user.stage === 4) {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.NH'
+                        } else {
+                            jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        }
+                        break
+                    default:
+                        jobPath = this.account.user.genre + '.' + this.userJob + '.' + this.userStage
+                        break
+                }
+
+                return jobPath
             },
             computedStage: function() {
                 return (this.account.user.stage / 4) * 100
@@ -332,7 +430,7 @@
                 this.avatarList.push(require('@/assets/' + this.clothesPath + '.png'))
 
                 if (this.account.user.job !== 'sans') {
-                    this.avatarList.push(require('@/assets/' + this.account.user.genre + '.' + this.userJob + '.' + this.userStage + '.png'))
+                    this.avatarList.push(require('@/assets/' + this.jobPath + '.png'))
                 }
             },
             handleSubmit(e) {

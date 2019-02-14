@@ -552,7 +552,8 @@
     }
 
     .md-card-actions {
-        background: #85e3cb !important;
+        /*background: #85e3cb !important;*/
+        background: #85cce3 !important;
     }
 
     .md-checkbox {
