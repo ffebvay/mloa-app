@@ -63,7 +63,7 @@
 
         <div id="tuto-step-5" class="v-step-5"></div>
         <!-- Main content (list of tasks) -->
-        <div id="tasks"><!--class="md-layout md-gutter"-->
+        <div id="tasks">
 
            <Tasks />
 
@@ -72,7 +72,7 @@
         <!-- Add task button -->
         <div v-if="(!showWelcome && !showEdit && !showJobSelect)" class="md-layout md-alignment-center-center fixed-fab v-step-4 v-step-6">
 
-            <router-link to="/task">
+            <router-link to="/choose">
                 <md-button class="md-fab">
                     <md-icon>add</md-icon>
                 </md-button>

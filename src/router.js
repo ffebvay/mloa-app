@@ -4,6 +4,8 @@ import Router from 'vue-router'
 import HomePage from './components/HomePage'
 import LoginPage from './components/LoginPage'
 import RegisterPage from './components/RegisterPage'
+import ChooseAction from './components/ChooseAction'
+import SelectActivity from './components/SelectActivity'
 import CreateTask from './components/CreateTask'
 import UserProfile from './components/UserProfile'
 import SocialFeed from './components/SocialFeed'
@@ -17,6 +19,17 @@ const router = new Router({
       { path: '/login', component: LoginPage },
       { path: '/register', component: RegisterPage },
       { path: '/task', component: CreateTask },
+      {
+          path: '/choose',
+          name: 'action',
+          component: ChooseAction
+      },
+      {
+          path: '/select',
+          name: 'select',
+          component: SelectActivity,
+          props: { default: true }
+      },
       {
           path: '/profile',
           name: 'profile',

@@ -7,6 +7,7 @@ import { snackbar } from './_modules/snackbar.module'
 import { account } from './_modules/account.module'
 import { users } from './_modules/users.module'
 import { tasks } from './_modules/tasks.module'
+import { activities } from './_modules/activities.module'
 
 Vue.use(Vuex)
 
@@ -29,7 +30,8 @@ export default new Vuex.Store({
         snackbar,
         account,
         users,
-        tasks
+        tasks,
+        activities
     },
     plugins: [vuexLocal.plugin]
 })

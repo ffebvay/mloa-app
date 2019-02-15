@@ -292,11 +292,7 @@
 
             </md-tab>
 
-
-
         </md-tabs>
-
-
 
         <EditTask :visible="showDialog" :task-id="currentTaskId" :task-to-update="currentTask" @close="onClose" />
 
@@ -328,8 +324,9 @@
         },
         created () {
             this.getAllTasks(this.account.user._id)
+            this.getAllActivities(this.account.user._id)
         },
-        updated () {
+        beforeUpdate () {
             // Only current way I found to update User stats once a task is completed
             setTimeout(() => {
                 this.getLoggedUser(this.account.user._id)
@@ -342,6 +339,9 @@
                 markDone: 'completeTask',
                 updateChecklistItem: 'editTask',
                 deleteSelected: 'deleteTask'
+            }),
+            ...mapActions('activities', {
+                getAllActivities: 'getAllByUser'
             }),
             ...mapActions('account', {
                 getLoggedUser: 'getCurrent'

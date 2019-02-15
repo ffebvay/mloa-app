@@ -1,7 +1,3 @@
-// Constants that are useful for game calculation
-export const MIN_EXP = 50
-export const MAX_LEVEL = 50
-
 export function experienceToNextLevel(userLvl) {
     var expToNext = 0
 

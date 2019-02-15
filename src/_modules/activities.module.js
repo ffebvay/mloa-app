@@ -1,4 +1,4 @@
-import {taskService} from '../_services'
+import { activityService } from '../_services'
 import router from '../router'
 
 const state = {
@@ -10,37 +10,37 @@ const actions = {
     getAll({ commit }) {
         commit('getAllRequest')
 
-        taskService.getAll()
+        activityService.getAll()
             .then(
-                tasks => commit('getAllSuccess', tasks),
+                activities => commit('getAllSuccess', activities),
                 error => commit('getAllFailure', error)
             )
     },
     getAllByUser({ commit }, uId) {
         commit('getAllByUserRequest', uId)
 
-        taskService.getAllByUser(uId)
+        activityService.getAllByUser(uId)
             .then(
-                tasks => commit('getAllByUserSuccess', tasks),
+                activities => commit('getAllByUserSuccess', activities),
                 error => commit('getAllByUserFailure', { uId, error: error.toString() })
             )
     },
-    getTask({ commit }, tId) {
-        commit('getTaskRequest', tId)
+    getActivity({ commit }, aId) {
+        commit('getActivityRequest', aId)
 
-        taskService.getById(tId)
+        activityService.getById(aId)
             .then(
-                task => commit('getTaskSuccess', task),
-                error => commit('getTaskFailure', { tId, error: error.toString() })
+                activity => commit('getActivitySuccess', activity),
+                error => commit('getActivityFailure', { aId, error: error.toString() })
             )
     },
-    addTask({ dispatch, commit }, task) {
-        commit('addTaskRequest', task)
+    addActivity({ dispatch, commit }, activity) {
+        commit('addActivityRequest', activity)
 
-        taskService.add(task)
+        activityService.add(activity)
             .then(
-                task => {
-                    commit('addTaskSuccess', task)
+                activity => {
+                    commit('addActivitySuccess', activity)
                     router.push('/')
                     setTimeout(() => {
                         // display success message after route change completes
@@ -48,21 +48,21 @@ const actions = {
                     })
                 },
                 error => {
-                    commit('addTaskFailure', error)
-                    dispatch('alert/error', 'Une erreur est survenue lors de l\'ajout de tâche : ' + error, { root: true })
+                    commit('addActivityFailure', error)
+                    dispatch('alert/error', 'Une erreur est survenue lors de l\'ajout d\'activité : ' + error, { root: true })
                 }
             )
     },
-    completeTask({ commit, dispatch }, params) {
-        commit('completeTaskRequest', params.task)
+    completeActivity({ commit, dispatch }, params) {
+        commit('completeActivityRequest', params.activity)
 
-        const tId = params.task._id
+        const aId = params.activity._id
 
         // Update selected Task "completed" status
-        taskService.update(params.task)
+        activityService.update(params.activity)
             .then(
-                task => {
-                    commit('completeTaskSuccess', task)
+                activity => {
+                    commit('completeActivitySuccess', activity)
 
                     console.log('New stats : ', params.newStats)
 
@@ -71,18 +71,18 @@ const actions = {
                         dispatch('snackbar/setSnack', params.snack, { root: true })
                     })
                 },
-                error => commit('completeTaskFailure', { tId, error: error.toString() })
+                error => commit('completeActivityFailure', { aId, error: error.toString() })
             )
 
 
     },
-    editTask({ dispatch, commit }, task) {
-        commit('editTaskRequest', task)
+    editActivity({ dispatch, commit }, activity) {
+        commit('editActivityRequest', activity)
 
-        taskService.update(task)
+        activityService.update(activity)
             .then(
-                task => {
-                    commit('editTaskSuccess', task)
+                activity => {
+                    commit('editActivitySuccess', activity)
                     router.push('/')
                     setTimeout(() => {
                         // display success message after route change completes
@@ -90,18 +90,18 @@ const actions = {
                     })
                 },
                 error => {
-                    commit('editTaskFailure', error)
-                    dispatch('alert/error', 'Une erreur est survenue lors de l\'ajout de tâche : ' + error, { root: true })
+                    commit('editActivityFailure', error)
+                    dispatch('alert/error', 'Une erreur est survenue lors de l\'ajout d\'activité : ' + error, { root: true })
                 }
             )
     },
-    deleteTask({ commit }, tId) {
-        commit('deleteRequest', tId)
+    deleteActivity({ commit }, aId) {
+        commit('deleteRequest', aId)
 
-        taskService.delete(tId)
+        activityService.delete(aId)
             .then(
-                task => commit('deleteSuccess', tId),
-                error => commit('deleteFailure', { tId, error: error.toString() })
+                activity => commit('deleteSuccess', aId),
+                error => commit('deleteFailure', { aId, error: error.toString() })
             )
     }
 }
@@ -110,61 +110,61 @@ const mutations = {
     getAllRequest(state) {
         state.all = { loading: true }
     },
-    getAllSuccess(state, tasks) {
-        state.all = { items: tasks }
+    getAllSuccess(state, activities) {
+        state.all = { items: activities }
     },
     getAllFailure(state, error) {
         state.all = { error }
     },
-    getTaskRequest(state) {
+    getActivityRequest(state) {
         state.current = { fetching: true }
     },
-    getTaskSuccess(state, task) {
+    getActivitySuccess(state, task) {
         state.current = task
     },
-    getTaskFailure(state, error) {
+    getActivityFailure(state, error) {
         state.current = { error }
     },
     getAllByUserRequest(state) {
         state.all = { loading: true }
     },
-    getAllByUserSuccess(state, tasks) {
-        state.all = { items: tasks }
+    getAllByUserSuccess(state, activities) {
+        state.all = { items: activities }
     },
     getAllByUserFailure(state, error) {
         state.all = { error }
     },
-    addTaskRequest(state, task) {
+    addActivityRequest(state) {
         state.status = { creating: true }
     },
-    addTaskSuccess(state, task) {
+    addActivitySuccess(state) {
         state.status = {}
     },
-    addTaskFailure(state, error) {
+    addActivityFailure(state, error) {
         state.status = { error }
     },
-    completeTaskRequest(state, task) {
+    completeActivityRequest(state) {
         state.status = { completing: true }
     },
-    completeTaskSuccess(state, task) {
+    completeActivitySuccess(state) {
         state.status = {}
     },
-    completeTaskFailure(state, error) {
+    completeActivityFailure(state, error) {
         state.status = { error }
     },
-    editTaskRequest(state, task) {
+    editActivityRequest(state) {
         state.status = { editing: true }
     },
-    editTaskSuccess(state, task) {
+    editActivitySuccess(state) {
         state.status = {}
     },
-    editTaskFailure(state, error) {
+    editActivityFailure(state, error) {
         state.status = { error }
     },
-    deleteRequest(state, task) {
+    deleteRequest(state) {
         state.status = { deleting: true }
     },
-    deleteSuccess(state, task) {
+    deleteSuccess(state) {
         state.status = {}
     },
     deleteFailure(state, error) {
@@ -172,7 +172,7 @@ const mutations = {
     }
 }
 
-export const tasks = {
+export const activities = {
     namespaced: true,
     state,
     actions,
