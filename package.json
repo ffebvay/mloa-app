@@ -20,6 +20,7 @@
     "moment": "^2.24.0",
     "mongodb": "^3.1.10",
     "mongoose": "^5.3.16",
+    "path": "^0.12.7",
     "register-service-worker": "^1.5.2",
     "rootpath": "^0.1.2",
     "vee-validate": "^2.1.4",
